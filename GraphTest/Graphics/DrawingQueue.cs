@@ -24,6 +24,7 @@ namespace GraphTest
     {
         private List<(IDrawable drawable, int index, bool isDrawing)> _collection;
         private bool _ordered;
+        private int _times;
 
         public bool InsideCall { get; set; }
 
@@ -37,6 +38,7 @@ namespace GraphTest
 
         public void Draw(DrawingEffects drawingEffects)
         {
+            _times++;
             if (!_ordered)
             {
                 _collection.Sort(((IDrawable, int index, bool) left, (IDrawable, int index, bool) right) => left.index - right.index);
@@ -54,7 +56,11 @@ namespace GraphTest
             }
         }
 
-        public void Clear() =>
+        public void Clear()
+        {
             _collection.Clear();
+            Console.WriteLine(_times);
+            _times = 0;
+        }
     }
 }

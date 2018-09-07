@@ -1,12 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using static System.Math;
-using static Microsoft.Xna.Framework.MathHelper;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Threading;
-using System.Diagnostics;
+using System.Collections.Generic;
+using static Microsoft.Xna.Framework.MathHelper;
+using static System.Math;
 
 namespace GraphTest
 {
@@ -26,7 +23,7 @@ namespace GraphTest
 
         public Shader Shader { get; private set; }
         public Matrix Matrix { get; set; }
-        public RenderTargetBinding[] RenderTarget { get; private set; }
+        public SourceRenderTargets RenderTargets { get; private set; }
         public SamplerState SamplerState { get; private set; }
         public RasterizerState RasterizerState { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }
@@ -36,6 +33,10 @@ namespace GraphTest
         public List<Keys> KeysPressedOnce => new List<Keys>(_keys);
         public Vector3 CameraDirection { get; private set; } = new Vector3(0f, 0f, 1f);
         public float FPS { get; private set; }
+
+        public BlendState BlendState { get; private set; }
+
+        public DynamicVertexBuffer StaticVertexes { get; private set; }
 
         public GraphTest() : base()
         {
@@ -146,15 +147,31 @@ namespace GraphTest
                 MultiSampleAntiAlias = true,
             };
 
-            RenderTarget = new RenderTargetBinding[]
+            BlendState = new BlendState()
             {
-                new RenderTargetBinding(new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 4, RenderTargetUsage.PreserveContents) {Name = "Color" }),
-                new RenderTargetBinding(new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Vector4, DepthFormat.None, 4, RenderTargetUsage.PreserveContents) {Name = "Position"}),
-                new RenderTargetBinding(new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.None, 4, RenderTargetUsage.PreserveContents) {Name = "Normal"}),
-                new RenderTargetBinding(new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Single, DepthFormat.None, 4, RenderTargetUsage.PreserveContents) { Name = "Depth" }),
+                AlphaBlendFunction = BlendFunction.Add,
+                AlphaDestinationBlend = Blend.InverseSourceAlpha,
+                AlphaSourceBlend = Blend.SourceAlpha,
+                BlendFactor = Color.White,
+                ColorBlendFunction = BlendFunction.Add,
+                ColorDestinationBlend = Blend.InverseSourceAlpha,
             };
 
+            RenderTargets = new SourceRenderTargets();
+
             United = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.None, 4, RenderTargetUsage.PreserveContents);
+
+            StaticVertexes = new DynamicVertexBuffer(GraphicsDevice, typeof(VertexPositionColorNormalTexture), 6, BufferUsage.WriteOnly);
+            var vert = new VertexPositionColorNormalTexture[]
+            {
+                new VertexPositionColorNormalTexture(new Vector3(-1,1,1), Color.White, Vector3.Zero, Vector2.Zero),
+                new VertexPositionColorNormalTexture(new Vector3(-1,-1,1), Color.White, Vector3.Zero, new Vector2(0f, 1f)),
+                new VertexPositionColorNormalTexture(new Vector3(1,-1, 1), Color.White, Vector3.Zero, Vector2.One),
+                new VertexPositionColorNormalTexture(new Vector3(1,-1, 1), Color.White, Vector3.Zero, Vector2.One),
+                new VertexPositionColorNormalTexture(new Vector3(-1,1,1), Color.White, Vector3.Zero, Vector2.Zero),
+                new VertexPositionColorNormalTexture(new Vector3(1,1,1), Color.White, Vector3.Zero, new Vector2(1f,0f))
+            };
+            StaticVertexes.SetData(vert);
 
             _ground = new Ground();
             _wall = new Wall();
@@ -175,8 +192,8 @@ namespace GraphTest
             _skybox = new SkyBox();
 
             LightEngine = new LightEngine();
-            LightEngine.Lights.Add(new Light());
-            //LightEngine.Lights.Add(new Light());
+            LightEngine.Lights.Add(new Light() { Position = new Vector3(5f, 0f, 5f), Radius = 20f });
+            //LightEngine.Lights.Add(new Light { Radius = 10 });
 
             base.LoadContent();
         }
@@ -268,10 +285,10 @@ namespace GraphTest
                 _keys.AddRange(state.GetPressedKeys());
             }
 
-            LightEngine.Lights[0].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 3f, 2.5f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 3f);
-            LightEngine.Lights[0].Direction = Vector3.Zero - LightEngine.Lights[0].Position;
-            //LightEngine.Lights[1].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d + 1.5d) * 3f, 2.5f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d + 1.5d) * 3f);
-            //LightEngine.Lights[1].Direction = Vector3.Zero - LightEngine.Lights[1].Position;
+            //LightEngine.Lights[0].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 6f, 0f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 6f);
+            //LightEngine.Lights[0].Radius = (float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 1000d) * 3f + 3.1f;
+            //LightEngine.Lights[1].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d + PI) * 6f, 2.5f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d + PI) * 6f);
+            // LightEngine.Lights[1].Direction = Vector3.Zero - LightEngine.Lights[1].Position;
 
             _state = Keyboard.GetState();
 
@@ -284,12 +301,12 @@ namespace GraphTest
 
         public void ClearTargets()
         {
-            GraphicsDevice.SetRenderTarget((RenderTarget2D)RenderTarget[0].RenderTarget);
-            GraphicsDevice.Clear(Color.SkyBlue);
-            GraphicsDevice.SetRenderTarget((RenderTarget2D)RenderTarget[3].RenderTarget);
+            GraphicsDevice.SetRenderTarget(RenderTargets.Color);
+            GraphicsDevice.Clear(Color.TransparentBlack);
+            GraphicsDevice.SetRenderTarget(RenderTargets.DepthMask);
             GraphicsDevice.Clear(Color.Black);
 
-            GraphicsDevice.SetRenderTargets(RenderTarget);
+            GraphicsDevice.SetRenderTargets(RenderTargets);
         }
 
         public void DrawBatch(Texture2D texture)
@@ -303,11 +320,11 @@ namespace GraphTest
         {
             ClearTargets();
 
-            DrawingQueue.Add(_skybox, -3);
+            DrawingQueue.Add(_skybox, -1);
             DrawingQueue.Add(_ground, 0);
             DrawingQueue.Add(_rzu, 0);
             DrawingQueue.Add(_rzu1, 0);
-            DrawingQueue.Add(_wall, -1);
+            //DrawingQueue.Add(_wall, -1);
             DrawingQueue.Add(_table, 0);
             DrawingQueue.Draw(DrawingEffects.Standart);
             Present();
@@ -321,10 +338,9 @@ namespace GraphTest
 
             GraphicsDevice.Clear(Color.TransparentBlack);
 
-           SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState, DepthStencilState.Default, RasterizerState);
+            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState, DepthStencilState.Default, RasterizerState);
             SpriteBatch.Draw(United, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), Color.White);
-            SpriteBatch.Draw((Texture2D)LightEngine._softShadows[0].RenderTarget, new Rectangle(1920 - 480, 0, 480, 270), Color.White);
-            SpriteBatch.Draw((Texture2D)LightEngine.Lights[0]._shadowMap[0].RenderTarget, new Rectangle(1920 - 480 * 2, 0, 480, 270), Color.White);
+            SpriteBatch.Draw(RenderTargets.DepthMask, new Rectangle(1920 - 480, 0, 480, 270), Color.White);
             SpriteBatch.End();
 
             base.Draw(gameTime);

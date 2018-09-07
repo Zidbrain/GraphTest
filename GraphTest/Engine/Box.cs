@@ -36,6 +36,7 @@ namespace GraphTest
 
             Program.GraphTest.GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
+            ef.WriteOnlyColor = true;
             ef.TextureEnabled = true;
             ef.Matrix = Matrix.CreateTranslation(Program.GraphTest.CameraPosition) * mat;
 
@@ -46,6 +47,7 @@ namespace GraphTest
                 Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
             }
 
+            ef.WriteOnlyColor = false;
             ef.Matrix = mat;
             Program.GraphTest.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }

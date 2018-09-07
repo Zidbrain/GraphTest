@@ -6,7 +6,8 @@
 #define PS_SHADERMODEL ps_5_0
 #endif
 
-#define TECHNIQUE(techniqueName, vertexShaderName, pixelShaderName) technique techniqueName {pass P0 {VertexShader = compile VS_SHADERMODEL vertexShaderName(); PixelShader = compile PS_SHADERMODEL pixelShaderName();}}
+#define TECHNIQUE(techniqueName, vertexShaderName, pixelShaderName) technique techniqueName {pass P0 { VertexShader = compile VS_SHADERMODEL vertexShaderName(); PixelShader = compile PS_SHADERMODEL pixelShaderName();}}
+#define TECHNIQUE_PARAMETERS(techiqueName, vertexShaderName, pixelShaderName, additionalParametes) technique techniqueName{pass P0 {additionalParameters VertexShader = compile VS_SHADERMODEL vertexShaderName(); PixelShader = compile PS_SHADERMODEL pixelShaderName();}}
 
 #define WRITEDEPTH outp.Depth = CreateFloat4(input.Position.z / input.Position.w, 1.0)
 
@@ -31,13 +32,14 @@ uniform extern float3 _lightPosition;
 uniform extern float _diffuseIntensity;
 uniform extern float3 _ambientColor;
 uniform extern float3 _viewVector;
-uniform extern bool _specular;
 uniform extern texture _shadowMap;
 uniform extern matrix _lightMatrix;
 uniform extern bool _vertical;
 uniform extern bool _writeOnlyColor;
 uniform extern texture _normalBuffer;
 uniform extern texture _positionBuffer;
+uniform extern int _amountOfLights;
+uniform extern bool _specular;
 
 static const float2 _screenSize = float2(1920, 1080);
 
@@ -122,6 +124,14 @@ sampler2D shadowMap = sampler_state
     AddressW = CLAMP;
 };
 
+sampler2D maskBuffer = sampler_state
+{
+    Texture = <_shadowMap>;
+    AddressU = CLAMP;
+    AddressV = CLAMP;
+    AddressW = CLAMP;
+};
+
 struct Mesh
 {
     float4 Position : POSITION0;
@@ -156,27 +166,38 @@ struct Target
 
 float4 CalculateColorLighting(in VSOut input) : SV_Target0
 {
+    float4 originalColor = tex2D(renderTargetSampler, input.TextureCoordinate);
+    float4 depthMask = tex2D(depthBuffer, input.TextureCoordinate);
+    if (depthMask.r == 0)
+        return originalColor;
+
+    float3 position = tex2D(positionBuffer, input.TextureCoordinate).rgb;
+    float _length = length(_lightPosition - position);
     float shadowValue = tex2D(shadowMap, input.TextureCoordinate).r;
+    float4 color = tex2D(textureSampler, input.TextureCoordinate);
+
+    if (_length >= _radius)
+        return color * shadowValue;
 
     float3 normal = tex2D(normalBuffer, input.TextureCoordinate).rgb;
-    float3 position = tex2D(positionBuffer, input.TextureCoordinate).rgb;
-    float3 color = tex2D(textureSampler, input.TextureCoordinate).rgb;
-    float3 originalColor = tex2D(renderTargetSampler, input.TextureCoordinate).rgb;
 
     float3 lightDirection = normalize(_lightPosition - position);
     float lightIntensity = _diffuseIntensity * dot(normal, lightDirection);
     
     float3 specularColor = float3(0, 0, 0);
-    if (_specular)
+    if (depthMask.g == 1)
     {
         float3 r = normalize(2 * dot(-lightDirection, normal) * normal + lightDirection);
-        specularColor = max(pow(dot(r, _viewVector), 50), 0) * color;
+        specularColor = max(pow(dot(r, _viewVector), 50), 0) * originalColor.rgb;
     }
 
     float3 diffuseColor = CreateFloat3(lightIntensity);
 
-    return float4(color + lerp(CreateFloat3(0),
-        originalColor * (saturate(diffuseColor) + saturate(specularColor)) * _radius * _radius / pow(length(_lightPosition - position), 2), CreateFloat3(shadowValue)), 1.0);
+    _length = pow(_length, _diffuseIntensity);
+    _radius = pow(_radius, _diffuseIntensity);
+
+    return float4(color.rgb + lerp(CreateFloat3(0),
+        originalColor.rgb * (diffuseColor + specularColor) * (1.0 - _length / _radius), CreateFloat3(shadowValue)), 1.0);
 }
 
 float4 ApplyGamma(in VSOut input) : SV_Target0
@@ -223,9 +244,13 @@ Target PS(in VSOut input)
     outp.Color = color;
     if (_writeOnlyColor)
         return outp;
+
     outp.Position = CreateFloat4(input.WorldPosition, 1.0);
     outp.Normal = CreateFloat4(input.Normal, 1);
-    outp.Depth = CreateFloat4(input.Position.z / input.Position.w, 1.0);
+    outp.Depth = float4(input.Position.z / input.Position.w, 0, 0, 1.0);
+
+    if (_specular)
+        outp.Depth.g = 1.0;
 
     return outp;
 }
@@ -241,18 +266,12 @@ float4 Combine(float4 a, float4 b)
 
 float2 Hot(float2 input, float distortionFactor)
 {
-    float2 distortionMapCoordinate = input;
-    distortionMapCoordinate.y -= _time * _riseFactor;
+    float2 coordinate = input;
+    coordinate -= _time * _riseFactor;
 	
-    float4 distortionMapValue = tex2D(hotSampler, distortionMapCoordinate);
-    float2 distortionPositionOffset = (float2) distortionMapValue - 0.5f;
-    distortionPositionOffset *= 2.0;
-	
-    distortionPositionOffset *= distortionFactor;
-	
-    distortionPositionOffset *= input.y;
+    float2 distortionPositionOffset = (tex2D(hotSampler, coordinate).rg - 0.5f) * 2 * distortionFactor * input.y;
     
-    return (float2) input + distortionPositionOffset;
+    return input + distortionPositionOffset;
 }
 
 Target HotPS(in VSOut input)
@@ -265,7 +284,7 @@ Target HotPS(in VSOut input)
     outp.Color = Combine(tex2D(textureSampler, newCoord) * input.Color, tex2D(renderTargetSampler, newCoord2));
     outp.Position = CreateFloat4(input.WorldPosition, 1.0);
     outp.Normal = CreateFloat4(input.Normal, 1);
-    outp.Depth = CreateFloat4(input.Position.z / input.Position.w, 1.0);
+    outp.Depth = float4(input.Position.z / input.Position.w, 0, 0, 1.0);
 
     return outp;
 }
@@ -279,20 +298,22 @@ float4 SoftShadows(in VSOut input) : SV_Target0
 {
     float4 color = (float4) 0;
 
-    float4 lightViewPosition = mul(CreateFloat4(input.WorldPosition, 1.0), _lightMatrix);
+    float4 pos = tex2D(positionBuffer, input.TextureCoordinate);
+    float4 lightViewPosition = mul(pos, _lightMatrix);
+    float4 tex = tex2D(depthBuffer, input.TextureCoordinate);
 
     float2 projText = float2(lightViewPosition.x / lightViewPosition.w / 2.0 + 0.5, -lightViewPosition.y / lightViewPosition.w / 2.0 + 0.5);
-    if ((saturate(projText.x) == projText.x) && (saturate(projText.y) == projText.y))
+    if ((saturate(projText.x) == projText.x) && (saturate(projText.y) == projText.y) && lightViewPosition.z > 0)
     {
         float lightDepth = 1.0 / lightViewPosition.w;
         float depthValue = tex2D(shadowMap, projText).r;
         if (lightDepth < depthValue)
-            color = float4(0, 0, 0, 1);
+            color = (tex - CreateFloat4(1.0 / _amountOfLights, 0.0));
         else
-            color = tex2D(depthBuffer, input.Position.xy / _screenSize);
+            color = tex;
     }
     else
-        color = tex2D(depthBuffer, input.Position.xy / _screenSize);
+        color = tex;
 
     return color;
 }

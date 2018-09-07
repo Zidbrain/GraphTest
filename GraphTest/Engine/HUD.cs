@@ -47,7 +47,7 @@ namespace GraphTest
                     try
                     {
                         if (_writtenText.StartsWith("dif "))
-                            Program.GraphTest.Shader.DiffuseIntensity = Convert.ToSingle(_writtenText.Remove(0, 4));
+                            Program.GraphTest.LightEngine.Lights[0].DiffuseIntensity = Convert.ToSingle(_writtenText.Remove(0, 4));
                         else if (_writtenText.StartsWith("rad "))
                             Program.GraphTest.LightEngine.Lights[0].Radius = Convert.ToSingle(_writtenText.Remove(0, 4));
                         else if (_writtenText.StartsWith("amb "))
@@ -57,7 +57,6 @@ namespace GraphTest
                             var index = Convert.ToInt32(_writtenText.Substring(4));
 
                             Program.GraphTest.LightEngine.Lights[index].Position = Program.GraphTest.CameraPosition;
-                            Program.GraphTest.LightEngine.Lights[index].Direction = Program.GraphTest.CameraDirection;
                         }
                     }
                     catch (FormatException) { }

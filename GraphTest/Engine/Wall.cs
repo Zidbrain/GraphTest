@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using static System.Math;
-using static Microsoft.Xna.Framework.MathHelper;
 
 namespace GraphTest
 {
@@ -35,7 +33,7 @@ namespace GraphTest
             }
             _buffer = new DynamicVertexBuffer(Program.GraphTest.GraphicsDevice, typeof(VertexPositionColorNormalTexture), _vertexes.Length, BufferUsage.WriteOnly);
             _buffer.SetData(_vertexes);
-          
+
             _texture = Program.GraphTest.Load<Texture2D>("lol");
         }
 
@@ -59,7 +57,7 @@ namespace GraphTest
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             gt.Shader.Technique = ShaderTechnique.Standart;
             effect.CheckDepth = true;
-            effect.DepthBuffer = (Texture2D)Program.GraphTest.RenderTarget[3].RenderTarget;
+            effect.DepthBuffer = Program.GraphTest.RenderTargets.Color;
             gt.DrawingQueue.Draw(DrawingEffects.SeenThroughWindow);
             gt.Present();
 
@@ -68,7 +66,7 @@ namespace GraphTest
             effect.Texture = _texture;
             effect.DistortionFactor = 0.1f;
             effect.RiseFactor = 0.8f;
-            effect.RenderTarget = (Texture2D)Program.GraphTest.RenderTarget[0].RenderTarget;
+            effect.RenderTarget = Program.GraphTest.RenderTargets.Color;
             gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
             effect.Technique = ShaderTechnique.Standart;
             gt.DrawingQueue.InsideCall = false;

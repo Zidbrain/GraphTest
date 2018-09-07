@@ -56,18 +56,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Box.cs" />
-    <Compile Include="DrawingQueue.cs" />
+    <Compile Include="Engine\Box.cs" />
+    <Compile Include="Extenstions.cs" />
+    <Compile Include="Graphics\DrawingQueue.cs" />
+    <Compile Include="Graphics\SourceRenderTargets.cs" />
     <Compile Include="GraphTest.cs" />
-    <Compile Include="Ground.cs" />
-    <Compile Include="HUD.cs" />
-    <Compile Include="Light.cs" />
-    <Compile Include="ModelManipulate.cs" />
+    <Compile Include="Engine\Ground.cs" />
+    <Compile Include="Engine\HUD.cs" />
+    <Compile Include="Graphics\Light.cs" />
+    <Compile Include="Graphics\ModelManipulate.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Rzu.cs" />
-    <Compile Include="Shader.cs" />
-    <Compile Include="VertexPositionColorNormalTexture.cs" />
-    <Compile Include="Wall.cs" />
+    <Compile Include="Engine\Rzu.cs" />
+    <Compile Include="Graphics\Shader.cs" />
+    <Compile Include="Graphics\VertexPositionColorNormalTexture.cs" />
+    <Compile Include="Engine\Wall.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\lol.bmp" />

@@ -68,10 +68,22 @@ namespace GraphTest
             Apply();
         }
 
+        public int AmountOfLights
+        {
+            get => Effect.Parameters["_amountOfLights"].GetValueInt32();
+            set => Effect.Parameters["_amountOfLights"].SetValue(value);
+        }
+
         public bool TextureEnabled
         {
             get => Effect.Parameters["_textureenabled"].GetValueBoolean();
             set => Effect.Parameters["_textureenabled"].SetValue(value);
+        }
+
+        public bool SpecularEnabled
+        {
+            get => Effect.Parameters["_specular"].GetValueBoolean();
+            set => Effect.Parameters["_specular"].SetValue(value);
         }
 
         public Vector4 Color
@@ -108,12 +120,6 @@ namespace GraphTest
         {
             get => Effect.Parameters["_positionBuffer"].GetValueTexture2D();
             set => Effect.Parameters["_positionBuffer"].SetValue(value);
-        }
-
-        public bool SpecularEnabled
-        {
-            get => Effect.Parameters["_specular"].GetValueBoolean();
-            set => Effect.Parameters["_specular"].SetValue(value);
         }
 
         public Vector3 ViewVector
