@@ -9,6 +9,7 @@ namespace GraphTest
         private DynamicVertexBuffer _buffer;
         private VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D _texture;
+        private readonly Matrix _mat = Matrix.CreateTranslation(Vector3.Zero);
 
         public DrawingEffects DrawingEffects => DrawingEffects.BasicDrawing | DrawingEffects.LightingEnabled;
 
@@ -42,13 +43,12 @@ namespace GraphTest
             var gt = Program.GraphTest;
             var effect = Program.GraphTest.Shader;
 
-            if (gt.DrawingQueue.InsideCall)
+            if (gt.Shader.LockTechnique)
             {
                 gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
                 return;
             }
 
-            gt.DrawingQueue.InsideCall = true;
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             effect.Technique = ShaderTechnique.WriteDepth;
             gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
@@ -66,10 +66,10 @@ namespace GraphTest
             effect.Texture = _texture;
             effect.DistortionFactor = 0.1f;
             effect.RiseFactor = 0.8f;
+            effect.ModelTransform = _mat;
             effect.RenderTarget = Program.GraphTest.RenderTargets.Color;
             gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
             effect.Technique = ShaderTechnique.Standart;
-            gt.DrawingQueue.InsideCall = false;
         }
     }
 }

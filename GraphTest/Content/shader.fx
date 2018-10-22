@@ -166,11 +166,6 @@ struct Target
 
 float4 CalculateColorLighting(in VSOut input) : SV_Target0
 {
-    float4 originalColor = tex2D(renderTargetSampler, input.TextureCoordinate);
-    float4 depthMask = tex2D(depthBuffer, input.TextureCoordinate);
-    if (depthMask.r == 0)
-        return originalColor;
-
     float3 position = tex2D(positionBuffer, input.TextureCoordinate).rgb;
     float _length = length(_lightPosition - position);
     float shadowValue = tex2D(shadowMap, input.TextureCoordinate).r;
@@ -183,18 +178,26 @@ float4 CalculateColorLighting(in VSOut input) : SV_Target0
 
     float3 lightDirection = normalize(_lightPosition - position);
     float lightIntensity = _diffuseIntensity * dot(normal, lightDirection);
+
+    float3 diffuseColor = float3(0, 0, 0);
+    if (lightIntensity >= 0)
+    {
+        diffuseColor = CreateFloat3(lightIntensity);
+        _length = pow(_length, _diffuseIntensity);
+        _radius = pow(_radius, _diffuseIntensity);
+    }
+    else
+        return color * shadowValue;
+
+    float4 originalColor = tex2D(renderTargetSampler, input.TextureCoordinate);
+    float4 depthMask = tex2D(depthBuffer, input.TextureCoordinate);
     
     float3 specularColor = float3(0, 0, 0);
     if (depthMask.g == 1)
     {
         float3 r = normalize(2 * dot(-lightDirection, normal) * normal + lightDirection);
-        specularColor = max(pow(dot(r, _viewVector), 50), 0) * originalColor.rgb;
+        specularColor = max(pow(dot(r, _viewVector), 250), 0) * originalColor.rgb;
     }
-
-    float3 diffuseColor = CreateFloat3(lightIntensity);
-
-    _length = pow(_length, _diffuseIntensity);
-    _radius = pow(_radius, _diffuseIntensity);
 
     return float4(color.rgb + lerp(CreateFloat3(0),
         originalColor.rgb * (diffuseColor + specularColor) * (1.0 - _length / _radius), CreateFloat3(shadowValue)), 1.0);
@@ -225,7 +228,7 @@ VSOut PrimitiveVS(in Primitive input)
     output.Position = mul(input.Position, _matrix);
     output.TextureCoordinate = input.TextureCoordinate;
     output.Color = input.Color;
-    output.WorldPosition = input.Position.xyz;
+    output.WorldPosition = mul(input.Position, _modelTransform).xyz;
     output.Normal = input.Normal.rgb;
 
     return output;
@@ -351,6 +354,95 @@ float4 ApplyAmbient(in VSOut input) : SV_Target0
 }
 
 
+VSOut MeshToonVS0(in Mesh input)
+{
+    VSOut output;
+
+    output.Position = mul(input.Position, _matrix);
+    output.Position.xy += 0.05 * float2(cos(_time * 10), sin(_time * 10));
+
+    output.Color = _color;
+
+    return output;
+}
+
+VSOut MeshToonVS1(in Mesh input)
+{
+    VSOut output;
+
+    output.Position = mul(input.Position, _matrix);
+    output.Position.xy += 0.05 * float2(cos(_time * 10 + 1.0 / 3.0 * 6.28), sin(_time * 10 + 1.0 / 3.0 * 6.28));
+
+    output.Color = _color;
+
+    return output;
+}
+
+VSOut MeshToonVS2(in Mesh input)
+{
+    VSOut output;
+
+    output.Position = mul(input.Position, _matrix);
+    output.Position.xy += 0.05 * float2(cos(_time * 10 + 2.0 / 3.0 * 6.28), sin(_time * 10 + 2.0 / 3.0 * 6.28));
+
+    output.Color = _color;
+
+    return output;
+}
+
+VSOut PrimitiveToonVS0(in Primitive input)
+{
+    VSOut output;
+
+    output.Position = mul(input.Position, _matrix);
+    output.Position.xy += 0.05 * float2(cos(_time * 10), sin(_time * 10));
+
+    output.Color = input.Color;
+
+ 
+    return output;
+}
+
+VSOut PrimitiveToonVS1(in Primitive input)
+{
+    VSOut output;
+
+    output.Position = mul(input.Position, _matrix);
+    output.Position.xy += 0.05 * float2(cos(_time * 10 + 1.0 / 3.0 * 6.28), sin(_time * 10 + 1.0 / 3.0 * 6.28));
+
+    output.Color = input.Color;
+
+    return output;
+}
+
+VSOut PrimitiveToonVS2(in Primitive input)
+{
+    VSOut output;
+
+    output.Position = mul(input.Position, _matrix);
+    output.Position.xy += 0.05 * float2(cos(_time * 10 + 2.0 / 3.0 * 6.28), sin(_time * 10 + 2.0 / 3.0 * 6.28));
+
+    output.Color = input.Color;
+
+    return output;
+}
+
+float4 ToonPS0(in VSOut input) : SV_Target0
+{
+    return float4(input.Color.r, 0, 0, 1);
+}
+
+float4 ToonPS1(in VSOut input) : SV_Target0
+{
+    return float4(0, input.Color.g, 0, 1);
+}
+
+float4 ToonPS2(in VSOut input) : SV_Target0
+{
+    return float4(0, 0, input.Color.b, 1);
+}
+
+
 TECHNIQUE(MeshStandart, MeshVS, PS);
 TECHNIQUE(MeshWriteDepth, MeshVS, WallPS0);
 TECHNIQUE(MeshSoftShadows, MeshVS, SoftShadows);
@@ -364,3 +456,41 @@ TECHNIQUE(PrimitiveBlur, PrimitiveVS, Blur);
 TECHNIQUE(PrimitiveApplyLighting, PrimitiveVS, CalculateColorLighting);
 TECHNIQUE(PrimitiveGamma, PrimitiveVS, ApplyGamma);
 TECHNIQUE(PrimitiveApplyAmbient, PrimitiveVS, ApplyAmbient);
+
+technique PrimitiveToon
+{
+    pass P0
+    {
+        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS0();
+        PixelShader = compile PS_SHADERMODEL ToonPS0();
+    }
+    pass P1
+    {
+        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS1();
+        PixelShader = compile PS_SHADERMODEL ToonPS1();
+    }
+    pass P2
+    {
+        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS2();
+        PixelShader = compile PS_SHADERMODEL ToonPS2();
+    }
+}
+
+technique MeshToon
+{
+    pass P0
+    {
+        VertexShader = compile VS_SHADERMODEL MeshToonVS0();
+        PixelShader = compile PS_SHADERMODEL ToonPS0();
+    }
+    pass P1
+    {
+        VertexShader = compile VS_SHADERMODEL MeshToonVS1();
+        PixelShader = compile PS_SHADERMODEL ToonPS1();
+    }
+    pass P2
+    {
+        VertexShader = compile VS_SHADERMODEL MeshToonVS2();
+        PixelShader = compile PS_SHADERMODEL ToonPS2();
+    }
+}

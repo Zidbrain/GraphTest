@@ -9,7 +9,7 @@ namespace GraphTest
         private readonly VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D[] _textures;
 
-        public DrawingEffects DrawingEffects => DrawingEffects.BasicDrawing;
+        public DrawingEffects DrawingEffects => DrawingEffects.BasicDrawing | DrawingEffects.SeenThroughWindow;
 
         public SkyBox()
         {
@@ -33,11 +33,13 @@ namespace GraphTest
         {
             var ef = Program.GraphTest.Shader;
             var mat = Program.GraphTest.Matrix;
+            var prev = ef.CheckDepth;
 
             Program.GraphTest.GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
             ef.WriteOnlyColor = true;
             ef.TextureEnabled = true;
+            ef.CheckDepth = false;
             ef.Matrix = Matrix.CreateTranslation(Program.GraphTest.CameraPosition) * mat;
 
             for (int i = 0; i < 6; i++)
@@ -49,6 +51,7 @@ namespace GraphTest
 
             ef.WriteOnlyColor = false;
             ef.Matrix = mat;
+            ef.CheckDepth = prev;
             Program.GraphTest.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
     }

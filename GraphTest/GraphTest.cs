@@ -40,7 +40,7 @@ namespace GraphTest
 
         public GraphTest() : base()
         {
-            _graphics = new GraphicsDeviceManager(this) { PreferMultiSampling = false, GraphicsProfile = GraphicsProfile.HiDef, HardwareModeSwitch = false, SynchronizeWithVerticalRetrace = false };
+            _graphics = new GraphicsDeviceManager(this) { PreferMultiSampling = true, GraphicsProfile = GraphicsProfile.HiDef, HardwareModeSwitch = false, SynchronizeWithVerticalRetrace = false };
             IsFixedTimeStep = false;
         }
 
@@ -113,8 +113,7 @@ namespace GraphTest
         public void DrawVertexes(DynamicVertexBuffer buffer, ShaderInputType inputType)
         {
             GraphicsDevice.SetVertexBuffer(buffer);
-            Shader.Apply(inputType);
-            GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, buffer.VertexCount);
+            Shader.ApplyDraw(inputType, buffer.VertexCount);
         }
 
         public void Present()
@@ -192,8 +191,8 @@ namespace GraphTest
             _skybox = new SkyBox();
 
             LightEngine = new LightEngine();
-            LightEngine.Lights.Add(new Light() { Position = new Vector3(5f, 0f, 5f), Radius = 20f });
-            //LightEngine.Lights.Add(new Light { Radius = 10 });
+            LightEngine.Lights.Add(new Light() { Position = new Vector3(5f, 0f, 5f), Radius = 20f, ShadowsEnabled = false });
+            LightEngine.Lights.Add(new Light { Radius = 10 });
 
             base.LoadContent();
         }
@@ -285,10 +284,9 @@ namespace GraphTest
                 _keys.AddRange(state.GetPressedKeys());
             }
 
-            //LightEngine.Lights[0].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 6f, 0f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 6f);
-            //LightEngine.Lights[0].Radius = (float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 1000d) * 3f + 3.1f;
-            //LightEngine.Lights[1].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d + PI) * 6f, 2.5f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d + PI) * 6f);
-            // LightEngine.Lights[1].Direction = Vector3.Zero - LightEngine.Lights[1].Position;
+            LightEngine.Lights[0].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 6f, 0f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d) * 6f);
+            LightEngine.Lights[0].Radius = (float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 1000d) * 3f + 3.1f;
+            LightEngine.Lights[1].Position = new Vector3((float)Cos(gameTime.TotalGameTime.TotalMilliseconds / 3000d + PI) * 6f, 2.5f, (float)Sin(gameTime.TotalGameTime.TotalMilliseconds / 3000d + PI) * 6f);
 
             _state = Keyboard.GetState();
 
@@ -304,6 +302,8 @@ namespace GraphTest
             GraphicsDevice.SetRenderTarget(RenderTargets.Color);
             GraphicsDevice.Clear(Color.TransparentBlack);
             GraphicsDevice.SetRenderTarget(RenderTargets.DepthMask);
+            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.SetRenderTarget(RenderTargets.Normal);
             GraphicsDevice.Clear(Color.Black);
 
             GraphicsDevice.SetRenderTargets(RenderTargets);
@@ -324,7 +324,7 @@ namespace GraphTest
             DrawingQueue.Add(_ground, 0);
             DrawingQueue.Add(_rzu, 0);
             DrawingQueue.Add(_rzu1, 0);
-            //DrawingQueue.Add(_wall, -1);
+            DrawingQueue.Add(_wall, -1);
             DrawingQueue.Add(_table, 0);
             DrawingQueue.Draw(DrawingEffects.Standart);
             Present();
@@ -336,11 +336,8 @@ namespace GraphTest
 
             GraphicsDevice.SetRenderTargets(null);
 
-            GraphicsDevice.Clear(Color.TransparentBlack);
-
-            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState, DepthStencilState.Default, RasterizerState);
+            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState, DepthStencilState.None, RasterizerState);
             SpriteBatch.Draw(United, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), Color.White);
-            SpriteBatch.Draw(RenderTargets.DepthMask, new Rectangle(1920 - 480, 0, 480, 270), Color.White);
             SpriteBatch.End();
 
             base.Draw(gameTime);

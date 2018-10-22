@@ -26,8 +26,6 @@ namespace GraphTest
         private bool _ordered;
         private int _times;
 
-        public bool InsideCall { get; set; }
-
         public DrawingQueue() => _collection = new List<(IDrawable drawable, int index, bool isDrawing)>();
 
         public void Add(IDrawable value, int index)
@@ -59,7 +57,6 @@ namespace GraphTest
         public void Clear()
         {
             _collection.Clear();
-            Console.WriteLine(_times);
             _times = 0;
         }
     }

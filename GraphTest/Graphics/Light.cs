@@ -84,7 +84,7 @@ namespace GraphTest
                 gt.Present();
             }
 
-            gt.DrawingQueue.InsideCall = false;
+            // Restore parameters and continiue
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             gt.Shader.Matrix = gt.Matrix;
             gt.Shader.Technique = ShaderTechnique.Standart;
@@ -102,17 +102,19 @@ namespace GraphTest
         public float Radius { get; set; } = 3f;
         public float DiffuseIntensity { get; set; } = 1f;
 
+        public bool ShadowsEnabled { get; set; } = true;
+
         static Light()
         {
             s_sides = new Vector3[]
-{
+            {
                 Vector3.Forward,
                 Vector3.Backward,
                 Vector3.Down,
                 Vector3.Up,
                 Vector3.Left,
                 Vector3.Right
-};
+            };
             s_ups = new Vector3[]
             {
                 Vector3.Up,
@@ -131,6 +133,9 @@ namespace GraphTest
 
         public void AppendShadow(RenderTargetBinding[] shadowsTarget)
         {
+            if (!ShadowsEnabled)
+                return;
+
             for (int i = 0; i < 6; i++)
             {
                 var gt = Program.GraphTest;
@@ -140,7 +145,7 @@ namespace GraphTest
 
                 // initial shadowm map
                 gt.Shader.Technique = ShaderTechnique.WriteDepth;
-                gt.DrawingQueue.InsideCall = true;
+                gt.Shader.LockTechnique = true;
 
                 gt.GraphicsDevice.SetRenderTargets(_shadowMap);
                 gt.GraphicsDevice.Clear(Color.Black);
@@ -152,6 +157,7 @@ namespace GraphTest
                 _box.Draw();
 
                 // shadow map from the perspective of the camera
+                gt.Shader.LockTechnique = false;
                 gt.GraphicsDevice.SetRenderTargets(shadowsTarget);
                 gt.Shader.ShadowMap = (Texture2D)_shadowMap[0].RenderTarget;
                 gt.Shader.Matrix = Matrix.Identity;

@@ -6,6 +6,7 @@ namespace GraphTest
     public class Ground : IDrawable
     {
         private DynamicVertexBuffer _buffer;
+        private readonly Matrix _mat = Matrix.CreateTranslation(Vector3.Zero);
 
         public DrawingEffects DrawingEffects => DrawingEffects.SeenThroughWindow | DrawingEffects.BasicDrawing | DrawingEffects.LightingEnabled;
 
@@ -26,6 +27,7 @@ namespace GraphTest
         {
             var effect = Program.GraphTest.Shader;
             effect.TextureEnabled = false;
+            effect.ModelTransform = _mat;
             Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
         }
     }

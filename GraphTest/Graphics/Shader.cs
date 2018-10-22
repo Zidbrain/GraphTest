@@ -12,7 +12,8 @@ namespace GraphTest
         Blur,
         ApplyLighting,
         Gamma,
-        ApplyAmbient
+        ApplyAmbient,
+        Toon
     }
 
     public enum ShaderInputType
@@ -22,7 +23,7 @@ namespace GraphTest
     }
 
     public class Shader
-    { 
+    {
         public Effect Effect { get; private set; }
 
         private ShaderTechnique _technique = ShaderTechnique.Standart;
@@ -60,12 +61,15 @@ namespace GraphTest
             Effect.Parameters["_hotTexture"].SetValue(gt.Load<Texture2D>("heatMap"));
         }
 
-        public void Apply() => Effect.CurrentTechnique.Passes[0].Apply();
-
-        public void Apply(ShaderInputType inputType)
+        public void ApplyDraw(ShaderInputType inputType, int bufferLength)
         {
             InputType = inputType;
-            Apply();
+            
+            foreach (var pass in Effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Program.GraphTest.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, bufferLength);
+            }
         }
 
         public int AmountOfLights
