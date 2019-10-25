@@ -10,6 +10,7 @@ namespace GraphTest
         private readonly RenderTargetBinding[] _softShadows;
 
         public List<Light> Lights { get; private set; }
+        public bool Enabled { get; set; } = true;
 
         public LightEngine()
         {
@@ -26,62 +27,77 @@ namespace GraphTest
             var gd = Program.GraphTest.GraphicsDevice;
             var gt = Program.GraphTest;
 
-            gt.Shader.AmountOfLights = Lights.Count;
-
-            // Append shadows to shared shadows buffer (perspective from camera)
-            gd.SetRenderTargets(_softShadows);
-            gd.Clear(Color.White);
-            gt.Shader.DepthBuffer = (Texture2D)_softShadows[0].RenderTarget;
-            gt.Shader.PositionBuffer = gt.RenderTargets.Position;
-
-            foreach (var light in Lights)
+            if (Enabled)
             {
-                light.AppendShadow(_softShadows);
-            }
-            gt.Present();
+                gt.Shader.AmountOfLights = Lights.Count;
 
-            // Blur the shadows buffer
-            gt.Shader.Texture = (Texture2D)_softShadows[0].RenderTarget;
-            gt.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            gt.Shader.Technique = ShaderTechnique.Blur;
-            gt.Shader.Matrix = Matrix.Identity;
-            for (int i = 0; i < 4; i++)
-            {
-                gt.Shader.VerticalBlur = false;
-                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
-                gt.Present();
-                gt.Shader.VerticalBlur = true;
-                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
-                gt.Present();
-            }
+                // Append shadows to shared shadows buffer (perspective from camera)
+                gd.SetRenderTargets(_softShadows);
+                gd.Clear(Color.White);
+                gt.Shader.DepthBuffer = (Texture2D)_softShadows[0].RenderTarget;
+                gt.Shader.PositionBuffer = gt.RenderTargets.Position;
 
+                foreach (var light in Lights)
+                {
+                    light.AppendShadow(_softShadows);
+                }
+                gt.Present();
+
+                // Blur the shadows buffer
+                gt.Shader.Texture = (Texture2D)_softShadows[0].RenderTarget;
+                gt.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+                gt.Shader.Technique = ShaderTechnique.Blur;
+                gt.Shader.Matrix = Matrix.Identity;
+                for (var i = 0; i < 4; i++)
+                {
+                    gt.Shader.VerticalBlur = false;
+                    gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                    gt.Present();
+                    gt.Shader.VerticalBlur = true;
+                    gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                    gt.Present();
+                }
+
+            }
             // Apply gamma to source render target (can do that since LightEngine draws itself only at the end of a frame)
             gt.Shader.Texture = gt.RenderTargets.Color;
             gt.Shader.ShadowMap = (Texture2D)_softShadows[0].RenderTarget;
             gt.Shader.NormalBuffer = gt.RenderTargets.Normal;
             gt.Shader.DepthBuffer = gt.RenderTargets.DepthMask;
 
-            gd.SetRenderTargets(gt.RenderTargets);
             gt.Shader.Technique = ShaderTechnique.Gamma;
-            gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
-
-            // Apply ambient lighting
-            gd.SetRenderTarget(gt.United);
-            gt.Shader.Technique = ShaderTechnique.ApplyAmbient;
-            gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
-            gt.Present();
-            gt.Shader.Texture = gt.United;
-            gt.Shader.RenderTarget = gt.RenderTargets.Color;
-
-            // Apply diffuse and specular lighting for each light
-            gt.Shader.Technique = ShaderTechnique.ApplyLighting;
-            foreach (var light in Lights)
+            if (Enabled)
             {
-                gt.Shader.LightPosition = light.Position;
-                gt.Shader.DiffuseRadius = light.Radius;
-                gt.Shader.DiffuseIntensity = light.DiffuseIntensity;
+                gd.SetRenderTargets(gt.RenderTargets);
+                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+            }
+            else
+            {
+                gd.SetRenderTarget(gt.United);
+                gt.Shader.Matrix = Matrix.Identity;
+                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+            }
+
+            if (Enabled)
+            {
+                // Apply ambient lighting
+                gd.SetRenderTarget(gt.United);
+                gt.Shader.Technique = ShaderTechnique.ApplyAmbient;
                 gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
                 gt.Present();
+                gt.Shader.Texture = gt.United;
+                gt.Shader.RenderTarget = gt.RenderTargets.Color;
+
+                // Apply diffuse and specular lighting for each light
+                gt.Shader.Technique = ShaderTechnique.ApplyLighting;
+                foreach (var light in Lights)
+                {
+                    gt.Shader.LightPosition = light.Position;
+                    gt.Shader.DiffuseRadius = light.Radius;
+                    gt.Shader.DiffuseIntensity = light.DiffuseIntensity;
+                    gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                    gt.Present();
+                }
             }
 
             // Restore parameters and continiue
@@ -94,7 +110,7 @@ namespace GraphTest
     public class Light
     {
         private readonly RenderTargetBinding[] _shadowMap;
-        private Box _box = new Box(0.25f);
+        private readonly Box _box = new Box(0.25f);
         private static readonly Vector3[] s_sides;
         private static readonly Vector3[] s_ups;
 
@@ -136,7 +152,7 @@ namespace GraphTest
             if (!ShadowsEnabled)
                 return;
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 var gt = Program.GraphTest;
                 var mat = gt.Matrix;

@@ -1,6 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
 using System.Collections.Generic;
-using System;
 
 namespace GraphTest
 {
@@ -22,9 +21,8 @@ namespace GraphTest
 
     public class DrawingQueue
     {
-        private List<(IDrawable drawable, int index, bool isDrawing)> _collection;
+        private readonly List<(IDrawable drawable, int index, bool isDrawing)> _collection;
         private bool _ordered;
-        private int _times;
 
         public DrawingQueue() => _collection = new List<(IDrawable drawable, int index, bool isDrawing)>();
 
@@ -36,14 +34,13 @@ namespace GraphTest
 
         public void Draw(DrawingEffects drawingEffects)
         {
-            _times++;
             if (!_ordered)
             {
                 _collection.Sort(((IDrawable, int index, bool) left, (IDrawable, int index, bool) right) => left.index - right.index);
                 _ordered = true;
             }
 
-            for (int i = 0; i < _collection.Count; i++)
+            for (var i = 0; i < _collection.Count; i++)
             {
                 if (!_collection[i].isDrawing && ((_collection[i].drawable.DrawingEffects & drawingEffects) != 0))
                 {
@@ -54,10 +51,6 @@ namespace GraphTest
             }
         }
 
-        public void Clear()
-        {
-            _collection.Clear();
-            _times = 0;
-        }
+        public void Clear() => _collection.Clear();
     }
 }

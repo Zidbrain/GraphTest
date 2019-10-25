@@ -9,7 +9,7 @@ namespace GraphTest
 {
     public class GraphTest : Game
     {
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private Rzu _rzu;
         private Rzu _rzu1;
         private Wall _wall;
@@ -40,7 +40,13 @@ namespace GraphTest
 
         public GraphTest() : base()
         {
-            _graphics = new GraphicsDeviceManager(this) { PreferMultiSampling = true, GraphicsProfile = GraphicsProfile.HiDef, HardwareModeSwitch = false, SynchronizeWithVerticalRetrace = false };
+            _graphics = new GraphicsDeviceManager(this)
+            { 
+                PreferMultiSampling = true, 
+                GraphicsProfile = GraphicsProfile.HiDef, 
+                HardwareModeSwitch = false, 
+                SynchronizeWithVerticalRetrace = false,
+            };
             IsFixedTimeStep = false;
         }
 
@@ -67,7 +73,7 @@ namespace GraphTest
             };
 
             var ret = new VertexPositionColorNormalTexture[6];
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
                 ret[i] = new VertexPositionColorNormalTexture(pos[i], Color.White, Vector3.Zero, tex[i]);
 
             return ret;
@@ -96,16 +102,13 @@ namespace GraphTest
             };
 
             var retr = new VertexPositionColorNormalTexture[ret.Count];
-            for (int i = 0; i < retr.Length; i++)
+            for (var i = 0; i < retr.Length; i++)
             {
                 retr[i] = new VertexPositionColorNormalTexture(ret[i].Position, color, normals[i / 6], ret[i].TextureCoordinate);
             }
 
             return retr;
         }
-
-        private static Vector2 ToVector2(Vector3 input) =>
-            new Vector2(input.X, input.Y);
 
         public T Load<T>(string path) =>
             Content.Load<T>(path);
@@ -178,7 +181,7 @@ namespace GraphTest
             _rzu1 = new Rzu(new Vector3(-0.5f, 0.5f, -1.5f), 0.5f);
             Mouse.SetPosition(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
 
-            _table = new ModelManipulate("untitled") { Position = new Vector3(0f, 0.25f, -2f) };
+            _table = new ModelManipulate("untitled") { Position = new Vector3(-2f, 0.25f, -4f), Size = new Vector3(0.3f) };
 
             DrawingQueue = new DrawingQueue();
 
@@ -190,7 +193,7 @@ namespace GraphTest
             _keys = new List<Keys>();
             _skybox = new SkyBox();
 
-            LightEngine = new LightEngine();
+            LightEngine = new LightEngine() { Enabled = true };
             LightEngine.Lights.Add(new Light() { Position = new Vector3(5f, 0f, 5f), Radius = 20f, ShadowsEnabled = false });
             LightEngine.Lights.Add(new Light { Radius = 10 });
 

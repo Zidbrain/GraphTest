@@ -6,7 +6,7 @@ namespace GraphTest
     {
         public static GraphTest GraphTest { get; private set; }
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             GraphTest = new GraphTest();
             GraphTest.Run();

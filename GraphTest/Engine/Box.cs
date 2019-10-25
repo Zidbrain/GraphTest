@@ -5,7 +5,7 @@ namespace GraphTest
 {
     public class SkyBox : IDrawable
     {
-        private DynamicVertexBuffer _buffer;
+        private readonly DynamicVertexBuffer _buffer;
         private readonly VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D[] _textures;
 
@@ -42,7 +42,7 @@ namespace GraphTest
             ef.CheckDepth = false;
             ef.Matrix = Matrix.CreateTranslation(Program.GraphTest.CameraPosition) * mat;
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 ef.Texture = _textures[i];
                 _buffer.SetData(_vertexes, i * 6, 6);
@@ -57,8 +57,8 @@ namespace GraphTest
     }
     public class Box : IDrawable
     {
-        private DynamicVertexBuffer _buffer;
-        private VertexPositionColorNormalTexture[] _vertexes;
+        private readonly DynamicVertexBuffer _buffer;
+        private readonly VertexPositionColorNormalTexture[] _vertexes;
         private Vector3 _position;
         private readonly Vector3[] _offsets;
 
@@ -75,7 +75,7 @@ namespace GraphTest
             {
                 _position = value;
 
-                for (int i = 0; i < _vertexes.Length; i++)
+                for (var i = 0; i < _vertexes.Length; i++)
                 {
                     _vertexes[i] = new VertexPositionColorNormalTexture(_position + _offsets[i], _vertexes[i].Color, _vertexes[i].Normal, _vertexes[i].TextureCoordinate);
                 }
@@ -88,7 +88,7 @@ namespace GraphTest
             _buffer = new DynamicVertexBuffer(Program.GraphTest.GraphicsDevice, typeof(VertexPositionColorNormalTexture), 36, BufferUsage.WriteOnly);
             _vertexes = GraphTest.ConstructCube(size, Color.White);
             _offsets = new Vector3[_vertexes.Length];
-            for (int i = 0; i < _offsets.Length; i++)
+            for (var i = 0; i < _offsets.Length; i++)
                 _offsets[i] = _vertexes[i].Position;
             _buffer.SetData(_vertexes);
         }

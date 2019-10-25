@@ -24,7 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -39,8 +39,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Content\shader.fx" />
+    <None Include="Content\Shaders\shader.fx" />
     <None Include="App.config" />
+    <None Include="Content\thonk.obj" />
+    <None Include="Content\untitled.fbx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +78,13 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Shaders\Blur.h" />
+    <Content Include="Content\Shaders\Data.h" />
+    <Content Include="Content\Shaders\Hot.h" />
+    <Content Include="Content\Shaders\Lighting.h" />
+    <Content Include="Content\Shaders\Toon.h" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

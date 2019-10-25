@@ -7,7 +7,7 @@ namespace GraphTest
 {
     public class HUD
     {
-        private SpriteFont _font;
+        private readonly SpriteFont _font;
         private string _writtenText = "";
         private readonly string _helpString;
 

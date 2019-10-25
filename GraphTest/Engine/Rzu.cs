@@ -5,10 +5,10 @@ namespace GraphTest
 {
     public class Rzu : IDrawable
     {
-        private DynamicVertexBuffer _buffer;
-        private VertexPositionColorNormalTexture[] _vertexes;
+        private readonly DynamicVertexBuffer _buffer;
+        private readonly VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D _texture;
-        private Model _model;
+        private readonly Model _model;
         private Vector3 _position;
         private Matrix _posMat;
         private readonly Vector3[] _offsets;
@@ -32,7 +32,7 @@ namespace GraphTest
 
             _vertexes = GraphTest.ConstructCube(size, Color.White);
             _offsets = new Vector3[_vertexes.Length];
-            for (int i = 0; i < _offsets.Length; i++)
+            for (var i = 0; i < _offsets.Length; i++)
                 _offsets[i] = _vertexes[i].Position;
             _posMat = Matrix.CreateTranslation(Vector3.Zero);
 
@@ -62,7 +62,7 @@ namespace GraphTest
             {
                 gd.BlendState = BlendState.Additive;
                 gd.DepthStencilState = DepthStencilState.DepthRead;
-                effect.Technique = ShaderTechnique.Toon;
+                effect.Technique = ShaderTechnique.Standart;
                 Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
 
                 gd.BlendState = bl;
@@ -93,7 +93,7 @@ namespace GraphTest
                 {
                     gd.BlendState = BlendState.Additive;
                     gd.DepthStencilState = DepthStencilState.DepthRead;
-                    effect.Technique = ShaderTechnique.Toon;
+                    effect.Technique = ShaderTechnique.Standart;
                     mesh.Draw();
 
                     gd.BlendState = bl;

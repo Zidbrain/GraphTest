@@ -5,7 +5,7 @@ namespace GraphTest
 {
     public class ModelManipulate : IDrawable
     {
-        private Model _model;
+        private readonly Model _model;
 
         public DrawingEffects DrawingEffects => DrawingEffects.Standart;
 
@@ -23,7 +23,7 @@ namespace GraphTest
             var ef = Program.GraphTest.Shader;
 
             ef.InputType = ShaderInputType.Mesh;
-            
+
             foreach (var mesh in _model.Meshes)
             {
                 var effect = (BasicEffect)mesh.Effects[0];
@@ -50,5 +50,5 @@ namespace GraphTest
             ef.Matrix = Program.GraphTest.Matrix;
         }
     }
-    
+
 }

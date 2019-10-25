@@ -56,7 +56,7 @@ namespace GraphTest
         public Shader()
         {
             var gt = Program.GraphTest;
-            Effect = gt.Load<Effect>("shader");
+            Effect = gt.Load<Effect>("Shaders/shader");
 
             Effect.Parameters["_hotTexture"].SetValue(gt.Load<Texture2D>("heatMap"));
         }

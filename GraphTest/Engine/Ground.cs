@@ -5,7 +5,7 @@ namespace GraphTest
 {
     public class Ground : IDrawable
     {
-        private DynamicVertexBuffer _buffer;
+        private readonly DynamicVertexBuffer _buffer;
         private readonly Matrix _mat = Matrix.CreateTranslation(Vector3.Zero);
 
         public DrawingEffects DrawingEffects => DrawingEffects.SeenThroughWindow | DrawingEffects.BasicDrawing | DrawingEffects.LightingEnabled;
@@ -16,7 +16,7 @@ namespace GraphTest
             var vert = GraphTest.ConstructSquare(new Vector3(-10f, -0.25f, -10f), new Vector3(10f, -0.25f, 10f), true);
             var vertexes = new VertexPositionColorNormalTexture[vert.Length];
 
-            for (int i = 0; i < vert.Length; i++)
+            for (var i = 0; i < vert.Length; i++)
             {
                 vertexes[i] = new VertexPositionColorNormalTexture(vert[i].Position, Color.Green, new Vector3(0f, 1f, 0f), vert[i].TextureCoordinate);
             }

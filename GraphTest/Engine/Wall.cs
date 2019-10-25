@@ -6,8 +6,8 @@ namespace GraphTest
 {
     public class Wall : IDrawable
     {
-        private DynamicVertexBuffer _buffer;
-        private VertexPositionColorNormalTexture[] _vertexes;
+        private readonly DynamicVertexBuffer _buffer;
+        private readonly VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D _texture;
         private readonly Matrix _mat = Matrix.CreateTranslation(Vector3.Zero);
 
@@ -28,7 +28,7 @@ namespace GraphTest
             };
 
             _vertexes = new VertexPositionColorNormalTexture[pos.Count];
-            for (int i = 0; i < _vertexes.Length; i++)
+            for (var i = 0; i < _vertexes.Length; i++)
             {
                 _vertexes[i] = new VertexPositionColorNormalTexture(pos[i].Position, new Color(Color.White, 0.5f), normals[i / 6], pos[i].TextureCoordinate);
             }
