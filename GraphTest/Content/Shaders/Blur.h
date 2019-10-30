@@ -30,4 +30,6 @@ float4 Blur(in VSOut input) : SV_Target0
     return color;
 }
 
+TECHNIQUE(PrimitiveBlur, PrimitiveVS, Blur);
+
 #endif

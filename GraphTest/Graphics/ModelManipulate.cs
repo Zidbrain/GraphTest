@@ -13,6 +13,8 @@ namespace GraphTest
 
         public Vector3 Size { get; set; } = Vector3.One;
 
+        public bool SpecularEnabled { get; set; }
+
         public ModelManipulate(string modelName) =>
             _model = Program.GraphTest.Load<Model>(modelName);
 
@@ -23,6 +25,8 @@ namespace GraphTest
             var ef = Program.GraphTest.Shader;
 
             ef.InputType = ShaderInputType.Mesh;
+            if (SpecularEnabled)
+                ef.SpecularEnabled = true;
 
             foreach (var mesh in _model.Meshes)
             {
@@ -36,8 +40,6 @@ namespace GraphTest
                 ef.Texture = effect.Texture;
 
                 var matrix = _model.Root.Transform;
-                //if (mesh.ParentBone.Index != 0)
-                //    matrix *= mesh.ParentBone.Transform;
                 ef.ModelTransform = matrix;
                 ef.Matrix = matrix * Program.GraphTest.Matrix;
 
@@ -48,6 +50,7 @@ namespace GraphTest
             }
 
             ef.Matrix = Program.GraphTest.Matrix;
+            ef.SpecularEnabled = false;
         }
     }
 

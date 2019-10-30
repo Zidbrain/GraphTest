@@ -42,6 +42,7 @@ namespace GraphTest
         {
             var gt = Program.GraphTest;
             var effect = Program.GraphTest.Shader;
+            var gd = gt.GraphicsDevice;
 
             if (gt.Shader.LockTechnique)
             {
@@ -49,15 +50,17 @@ namespace GraphTest
                 return;
             }
 
+            gd.SetRenderTarget(gt.RenderTargets.DepthMask);
+            gd.Clear(Color.Black);
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             effect.Technique = ShaderTechnique.WriteDepth;
             gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
-            gt.Present();
 
+            gd.SetRenderTarget(gt.RenderTargets.Color);
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             gt.Shader.Technique = ShaderTechnique.Standart;
             effect.CheckDepth = true;
-            effect.DepthBuffer = Program.GraphTest.RenderTargets.Color;
+            effect.DepthBuffer = Program.GraphTest.RenderTargets.DepthMask;
             gt.DrawingQueue.Draw(DrawingEffects.SeenThroughWindow);
             gt.Present();
 

@@ -72,8 +72,6 @@ sampler2D textureSampler = sampler_state
     AddressU = CLAMP;
     AddressV = CLAMP;
     AddressW = CLAMP;
-    Filter = ANISOTROPIC;
-    MaxAnisotropy = 16;
 };
 
 sampler2D hotSampler = sampler_state

@@ -76,4 +76,11 @@ float4 ApplyAmbient(in VSOut input) : SV_Target0
     return tex2D(textureSampler, input.TextureCoordinate) * CreateFloat4(_ambientColor, 1);
 }
 
+TECHNIQUE(PrimitiveApplyLighting, PrimitiveVS, CalculateColorLighting);
+TECHNIQUE(PrimitiveGamma, PrimitiveVS, ApplyGamma);
+TECHNIQUE(PrimitiveApplyAmbient, PrimitiveVS, ApplyAmbient);
+TECHNIQUE(PrimitiveSoftShadows, PrimitiveVS, SoftShadows);
+
+TECHNIQUE(MeshSoftShadows, MeshVS, SoftShadows);
+
 #endif

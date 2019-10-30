@@ -91,4 +91,42 @@ float4 ToonPS2(in VSOut input) : SV_Target0
     return float4(0, 0, input.Color.b, 1);
 }
 
+technique PrimitiveToon
+{
+    pass P0
+    {
+        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS0();
+        PixelShader = compile PS_SHADERMODEL ToonPS0();
+    }
+    pass P1
+    {
+        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS1();
+        PixelShader = compile PS_SHADERMODEL ToonPS1();
+    }
+    pass P2
+    {
+        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS2();
+        PixelShader = compile PS_SHADERMODEL ToonPS2();
+    }
+};
+
+technique MeshToon
+{
+    pass P0
+    {
+        VertexShader = compile VS_SHADERMODEL MeshToonVS0();
+        PixelShader = compile PS_SHADERMODEL ToonPS0();
+    }
+    pass P1
+    {
+        VertexShader = compile VS_SHADERMODEL MeshToonVS1();
+        PixelShader = compile PS_SHADERMODEL ToonPS1();
+    }
+    pass P2
+    {
+        VertexShader = compile VS_SHADERMODEL MeshToonVS2();
+        PixelShader = compile PS_SHADERMODEL ToonPS2();
+    }
+};
+
 #endif

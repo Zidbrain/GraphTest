@@ -4,6 +4,26 @@
         <name>MonoGame.Framework</name>
     </assembly>
     <members>
+        <member name="M:Microsoft.Xna.Framework.BoundingBox.CreateFromPoints(Microsoft.Xna.Framework.Vector3[],System.Int32,System.Int32)">
+            <summary>
+            Create a bounding box from the given list of points.
+            </summary>
+            <param name="points">The array of Vector3 instances defining the point cloud to bound</param>
+            <param name="index">The base index to start iterating from</param>
+            <param name="count">The number of points to iterate</param>
+            <returns>A bounding box that encapsulates the given point cloud.</returns>
+            <exception cref="T:System.ArgumentException">Thrown if the given array is null or has no points.</exception>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.BoundingBox.CreateFromPoints(System.Collections.Generic.List{Microsoft.Xna.Framework.Vector3},System.Int32,System.Int32)">
+            <summary>
+            Create a bounding box from the given list of points.
+            </summary>
+            <param name="points">The list of Vector3 instances defining the point cloud to bound</param>
+            <param name="index">The base index to start iterating from</param>
+            <param name="count">The number of points to iterate</param>
+            <returns>A bounding box that encapsulates the given point cloud.</returns>
+            <exception cref="T:System.ArgumentException">Thrown if the given list is null or has no points.</exception>
+        </member>
         <member name="M:Microsoft.Xna.Framework.BoundingBox.CreateFromPoints(System.Collections.Generic.IEnumerable{Microsoft.Xna.Framework.Vector3})">
             <summary>
             Create a bounding box from the given list of points.
@@ -2073,6 +2093,16 @@
             This event is only supported on the Windows DirectX, Windows OpenGL and Linux platforms.
             </remarks>
         </member>
+        <member name="E:Microsoft.Xna.Framework.GameWindow.KeyDown">
+            <summary>
+            Buffered keyboard KeyDown event.
+            </summary>
+        </member>
+        <member name="E:Microsoft.Xna.Framework.GameWindow.KeyUp">
+            <summary>
+            Buffered keyboard KeyUp event.
+            </summary>
+        </member>
         <member name="T:Microsoft.Xna.Framework.IGraphicsDeviceManager">
             <summary>
             Used by the platform code to control the graphics device.
@@ -3830,13 +3860,13 @@
             <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Microsoft.Xna.Framework.Input.GamePadDPad"/>.</returns>
         </member>
         <member name="T:Microsoft.Xna.Framework.Input.GamePadState">
-            <summary>
-            Represents specific information about the state of the controller,
-            including the current state of buttons and sticks.
+             <summary>
+             Represents specific information about the state of the controller,
+             including the current state of buttons and sticks.
             
-            This is implemented as a partial struct to allow for individual platforms
-            to offer additional data without separate state queries to GamePad.
-            </summary>
+             This is implemented as a partial struct to allow for individual platforms
+             to offer additional data without separate state queries to GamePad.
+             </summary>
         </member>
         <member name="F:Microsoft.Xna.Framework.Input.GamePadState.Default">
             <summary>
@@ -3891,14 +3921,25 @@
         </member>
         <member name="M:Microsoft.Xna.Framework.Input.GamePadState.#ctor(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,System.Single,System.Single,Microsoft.Xna.Framework.Input.Buttons)">
             <summary>
-            Initializes a new instance of the <see cref="T:Microsoft.Xna.Framework.Input.GamePadState"/> struct.
+            Initializes a new instance of the <see cref="T:Microsoft.Xna.Framework.Input.GamePadState"/> struct
             using the specified stick, trigger, and button values.
             </summary>
             <param name="leftThumbStick">Left stick value. Each axis is clamped between −1.0 and 1.0.</param>
             <param name="rightThumbStick">Right stick value. Each axis is clamped between −1.0 and 1.0.</param>
             <param name="leftTrigger">Left trigger value. This value is clamped between 0.0 and 1.0.</param>
             <param name="rightTrigger">Right trigger value. This value is clamped between 0.0 and 1.0.</param>
-            <param name="buttons"> Array or parameter list of Buttons to initialize as pressed.</param>
+            <param name="button">Button(s) to initialize as pressed.</param>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Input.GamePadState.#ctor(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,System.Single,System.Single,Microsoft.Xna.Framework.Input.Buttons[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Xna.Framework.Input.GamePadState"/> struct
+            using the specified stick, trigger, and button values.
+            </summary>
+            <param name="leftThumbStick">Left stick value. Each axis is clamped between −1.0 and 1.0.</param>
+            <param name="rightThumbStick">Right stick value. Each axis is clamped between −1.0 and 1.0.</param>
+            <param name="leftTrigger">Left trigger value. This value is clamped between 0.0 and 1.0.</param>
+            <param name="rightTrigger">Right trigger value. This value is clamped between 0.0 and 1.0.</param>
+            <param name="buttons"> Array of Buttons to initialize as pressed.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Input.GamePadState.GetVirtualButtons">
             <summary>
@@ -4131,6 +4172,11 @@
             Allows interaction with joysticks. Unlike <see cref="T:Microsoft.Xna.Framework.Input.GamePad"/> the number of Buttons/Axes/DPads is not limited.
             </summary>
         </member>
+        <member name="F:Microsoft.Xna.Framework.Input.Joystick._defaultJoystickState">
+            <summary>
+            A default <see cref="T:Microsoft.Xna.Framework.Input.JoystickState"/>.
+            </summary>
+        </member>
         <member name="P:Microsoft.Xna.Framework.Input.Joystick.IsSupported">
             <summary>
             Gets a value indicating whether the current platform supports reading raw joystick data.
@@ -4150,6 +4196,13 @@
             </summary>
             <param name="index">Index of the joystick you want to access.</param>
             <returns>The state of the joystick.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Input.Joystick.GetState(Microsoft.Xna.Framework.Input.JoystickState@,System.Int32)">
+            <summary>
+            Gets the current state of the joystick by updating an existing <see cref="T:Microsoft.Xna.Framework.Input.JoystickState"/>.
+            </summary>
+            <param name="joystickState">The <see cref="T:Microsoft.Xna.Framework.Input.JoystickState"/> to update.</param>
+            <param name="index">Index of the joystick you want to access.</param>
         </member>
         <member name="T:Microsoft.Xna.Framework.Input.JoystickCapabilities">
             <summary>
@@ -4465,11 +4518,24 @@
             <param name="key">The key to query.</param>
             <returns>true if the key is not pressed; false otherwise.</returns>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Input.KeyboardState.GetPressedKeyCount">
+            <summary>
+            Returns the number of pressed keys in this <see cref="T:Microsoft.Xna.Framework.Input.KeyboardState"/>.
+            </summary>
+            <returns>An integer representing the number of keys currently pressed in this <see cref="T:Microsoft.Xna.Framework.Input.KeyboardState"/>.</returns>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Input.KeyboardState.GetPressedKeys">
             <summary>
             Returns an array of values holding keys that are currently being pressed.
             </summary>
             <returns>The keys that are currently being pressed.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Input.KeyboardState.GetPressedKeys(Microsoft.Xna.Framework.Input.Keys[])">
+            <summary>
+            Fills an array of values holding keys that are currently being pressed.
+            </summary>
+            <param name="keys">The keys array to fill.
+            This array is not cleared, and it must be equal to or larger than the number of keys pressed.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Input.KeyboardState.GetHashCode">
             <summary>
@@ -5304,6 +5370,13 @@
             <summary>
             OEM Enlarge Window key.
             </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Input.KeysHelper.IsKey(System.Int32)">
+            <summary>
+            Checks if specified value is valid Key.
+            </summary>
+            <param name="value">Keys base value</param>
+            <returns>Returns true if value is valid Key, false otherwise</returns>
         </member>
         <member name="T:Microsoft.Xna.Framework.Input.KeyState">
             <summary>
@@ -6289,6 +6362,13 @@
             <para>SoundEffect.Play() can be used for 'fire and forget' sounds. If advanced playback controls like volume or pitch is required, use SoundEffect.CreateInstance().</para>
             </remarks>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Audio.SoundEffect.Initialize">
+            <summary>
+            Initializes the sound system for SoundEffect support.
+            This method is automatically called when a SoundEffect is loaded, a DynamicSoundEffectInstance is created, or Microphone.All is queried.
+            You can however call this method manually (preferably in, or before the Game constructor) to catch any Exception that may occur during the sound system initialization (and act accordingly).
+            </summary>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Audio.SoundEffect.#ctor(System.Byte[],System.Int32,Microsoft.Xna.Framework.Audio.AudioChannels)">
             <summary>
             Create a sound effect.
@@ -6323,6 +6403,26 @@
             </summary>
             <returns>A new SoundEffectInstance for this SoundEffect.</returns>
             <remarks>Creating a SoundEffectInstance before calling SoundEffectInstance.Play() allows you to access advanced playback features, such as volume, pitch, and 3D positioning.</remarks>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Audio.SoundEffect.FromFile(System.String)">
+            <summary>
+            Creates a new SoundEffect object based on the specified data stream.
+            This internally calls <see cref="M:Microsoft.Xna.Framework.Audio.SoundEffect.FromStream(System.IO.Stream)"/>.
+            </summary>
+            <param name="path">The path to the audio file.</param>
+            <returns>The <see cref="T:Microsoft.Xna.Framework.Audio.SoundEffect"/> loaded from the given file.</returns>
+            <remarks>The stream must point to the head of a valid wave file in the RIFF bitstream format.  The formats supported are:
+            <list type="bullet">
+            <item>
+            <description>8-bit unsigned PCM</description>
+            <description>16-bit signed PCM</description>
+            <description>24-bit signed PCM</description>
+            <description>32-bit IEEE float PCM</description>
+            <description>MS-ADPCM 4-bit compressed</description>
+            <description>IMA/ADPCM (IMA4) 4-bit compressed</description>
+            </item>
+            </list>
+            </remarks>
         </member>
         <member name="M:Microsoft.Xna.Framework.Audio.SoundEffect.FromStream(System.IO.Stream)">
             <summary>
@@ -6445,7 +6545,7 @@
             no managed objects should be touched because we do not know if they are still valid or
             not at that time.  Unmanaged resources should always be released.</remarks>
         </member>
-        <member name="M:Microsoft.Xna.Framework.Audio.SoundEffect.InitializeSoundEffect">
+        <member name="M:Microsoft.Xna.Framework.Audio.SoundEffect.PlatformInitialize">
             <summary>
             Initializes XAudio.
             </summary>
@@ -7017,6 +7117,12 @@
             Virtual property to allow a derived ContentManager to have it's assets reloaded
             </summary>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Content.ContentReaderExtensions.GetGraphicsDevice(Microsoft.Xna.Framework.Content.ContentReader)">
+            <summary>
+            Gets the GraphicsDevice from the ContentManager.ServiceProvider.
+            </summary>
+            <returns>The <see cref="T:Microsoft.Xna.Framework.Graphics.GraphicsDevice"/>.</returns>
+        </member>
         <member name="T:Microsoft.Xna.Framework.Content.ExternalReferenceReader">
             <summary>
             External reference reader, provided for compatibility with XNA Framework built content
@@ -7125,6 +7231,13 @@
             <param name="point">The point to check</param>
             <param name="plane">The place to check</param>
             <returns>The perpendicular distance from the point to the plane</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Plane.#ctor(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Create a <see cref="T:Microsoft.Xna.Framework.Plane"/> that contains the specified point and has the specified <see cref="F:Microsoft.Xna.Framework.Plane.Normal"/> vector.
+            </summary>
+            <param name="pointOnPlane">A point the created <see cref="T:Microsoft.Xna.Framework.Plane"/> should contain.</param>
+            <param name="normal">The normal of the plane.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Plane.Transform(Microsoft.Xna.Framework.Plane,Microsoft.Xna.Framework.Matrix)">
             <summary>
@@ -8266,6 +8379,25 @@
             <param name="amount">Weighting factor.</param>
             <param name="result">The result of CatmullRom interpolation as an output parameter.</param>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Ceiling">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector2"/> towards positive infinity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Ceiling(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector2"/> that contains members from another vector rounded towards positive infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Ceiling(Microsoft.Xna.Framework.Vector2@,Microsoft.Xna.Framework.Vector2@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector2"/> that contains members from another vector rounded towards positive infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Vector2.Clamp(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2)">
             <summary>
             Clamps the specified value within a range.
@@ -8377,6 +8509,25 @@
             </summary>
             <param name="other">The <see cref="T:Microsoft.Xna.Framework.Vector2"/> to compare.</param>
             <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Floor">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector2"/> towards negative infinity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Floor(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector2"/> that contains members from another vector rounded towards negative infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Floor(Microsoft.Xna.Framework.Vector2@,Microsoft.Xna.Framework.Vector2@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector2"/> that contains members from another vector rounded towards negative infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Vector2.GetHashCode">
             <summary>
@@ -8572,6 +8723,25 @@
             <param name="vector">Source <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
             <param name="normal">Reflection normal.</param>
             <param name="result">Reflected vector as an output parameter.</param>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Round">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector2"/> to the nearest integer value.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Round(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector2"/> that contains members from another vector rounded to the nearest integer value.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector2.Round(Microsoft.Xna.Framework.Vector2@,Microsoft.Xna.Framework.Vector2@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector2"/> that contains members from another vector rounded to the nearest integer value.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector2"/>.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Vector2.SmoothStep(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,System.Single)">
             <summary>
@@ -8890,6 +9060,25 @@
             <param name="amount">Weighting factor.</param>
             <param name="result">The result of CatmullRom interpolation as an output parameter.</param>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Ceiling">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector3"/> towards positive infinity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Ceiling(Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector3"/> that contains members from another vector rounded towards positive infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Ceiling(Microsoft.Xna.Framework.Vector3@,Microsoft.Xna.Framework.Vector3@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector3"/> that contains members from another vector rounded towards positive infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Vector3.Clamp(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3)">
             <summary>
             Clamps the specified value within a range.
@@ -9017,6 +9206,25 @@
             </summary>
             <param name="other">The <see cref="T:Microsoft.Xna.Framework.Vector3"/> to compare.</param>
             <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Floor">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector3"/> towards negative infinity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Floor(Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector3"/> that contains members from another vector rounded towards negative infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Floor(Microsoft.Xna.Framework.Vector3@,Microsoft.Xna.Framework.Vector3@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector3"/> that contains members from another vector rounded towards negative infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Vector3.GetHashCode">
             <summary>
@@ -9212,6 +9420,25 @@
             <param name="vector">Source <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
             <param name="normal">Reflection normal.</param>
             <param name="result">Reflected vector as an output parameter.</param>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Round">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector3"/> towards the nearest integer value.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Round(Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector3"/> that contains members from another vector rounded to the nearest integer value.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector3.Round(Microsoft.Xna.Framework.Vector3@,Microsoft.Xna.Framework.Vector3@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector3"/> that contains members from another vector rounded to the nearest integer value.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector3"/>.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Vector3.SmoothStep(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,System.Single)">
             <summary>
@@ -9593,6 +9820,25 @@
             <param name="amount">Weighting factor.</param>
             <param name="result">The result of CatmullRom interpolation as an output parameter.</param>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Ceiling">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector4"/> towards positive infinity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Ceiling(Microsoft.Xna.Framework.Vector4)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector4"/> that contains members from another vector rounded towards positive infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Ceiling(Microsoft.Xna.Framework.Vector4@,Microsoft.Xna.Framework.Vector4@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector4"/> that contains members from another vector rounded towards positive infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Vector4.Clamp(Microsoft.Xna.Framework.Vector4,Microsoft.Xna.Framework.Vector4,Microsoft.Xna.Framework.Vector4)">
             <summary>
             Clamps the specified value within a range.
@@ -9704,6 +9950,25 @@
             </summary>
             <param name="other">The <see cref="T:Microsoft.Xna.Framework.Vector4"/> to compare.</param>
             <returns><c>true</c> if the instances are equal; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Floor">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector4"/> towards negative infinity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Floor(Microsoft.Xna.Framework.Vector4)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector4"/> that contains members from another vector rounded towards negative infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Floor(Microsoft.Xna.Framework.Vector4@,Microsoft.Xna.Framework.Vector4@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector4"/> that contains members from another vector rounded towards negative infinity.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Vector4.GetHashCode">
             <summary>
@@ -9883,6 +10148,25 @@
             </summary>
             <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
             <param name="result">Unit vector as an output parameter.</param>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Round">
+            <summary>
+            Round the members of this <see cref="T:Microsoft.Xna.Framework.Vector4"/> to the nearest integer value.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Round(Microsoft.Xna.Framework.Vector4)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector4"/> that contains members from another vector rounded to the nearest integer value.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
+            <returns>The rounded <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Vector4.Round(Microsoft.Xna.Framework.Vector4@,Microsoft.Xna.Framework.Vector4@)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.Xna.Framework.Vector4"/> that contains members from another vector rounded to the nearest integer value.
+            </summary>
+            <param name="value">Source <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
+            <param name="result">The rounded <see cref="T:Microsoft.Xna.Framework.Vector4"/>.</param>
         </member>
         <member name="M:Microsoft.Xna.Framework.Vector4.SmoothStep(Microsoft.Xna.Framework.Vector4,Microsoft.Xna.Framework.Vector4,System.Single)">
             <summary>
@@ -11157,6 +11441,11 @@
             Creates a new SpriteEffect.
             </summary>
         </member>
+        <member name="P:Microsoft.Xna.Framework.Graphics.SpriteEffect.TransformMatrix">
+            <summary>
+            An optional matrix used to transform the sprite geometry. Uses <see cref="P:Microsoft.Xna.Framework.Matrix.Identity"/> if null.
+            </summary>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Graphics.SpriteEffect.#ctor(Microsoft.Xna.Framework.Graphics.SpriteEffect)">
             <summary>
             Creates a new SpriteEffect by cloning parameter settings from an existing instance.
@@ -11333,6 +11622,26 @@
             <param name="message">The graphics debugging message if retrieved, null otherwise.</param>
             <returns>True if a graphics debugging message was retrieved, false otherwise.</returns>
         </member>
+        <member name="P:Microsoft.Xna.Framework.Graphics.GraphicsDevice.UseHalfPixelOffset">
+            <summary>
+            Indicates if DX9 style pixel addressing or current standard
+            pixel addressing should be used. This flag is set to
+            <c>false</c> by default. If `UseHalfPixelOffset` is
+            `true` you have to add half-pixel offset to a Projection matrix.
+            See also <see cref="P:Microsoft.Xna.Framework.GraphicsDeviceManager.PreferHalfPixelOffset"/>.
+            </summary>
+            <remarks>
+            XNA uses DirectX9 for its graphics. DirectX9 interprets UV
+            coordinates differently from other graphics API's. This is
+            typically referred to as the half-pixel offset. MonoGame
+            replicates XNA behavior if this flag is set to <c>true</c>.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Xna.Framework.Graphics.GraphicsDevice.DiscardColor">
+            <summary>
+            Get or set the color a <see cref="T:Microsoft.Xna.Framework.Graphics.RenderTarget2D"/> is cleared to when it is set.
+            </summary>
+        </member>
         <member name="F:Microsoft.Xna.Framework.Graphics.GraphicsDevice._vertexShader">
             <summary>
             The active vertex shader.
@@ -11365,6 +11674,18 @@
             </summary>
             <param name="adapter">The graphics adapter.</param>
             <param name="graphicsProfile">The graphics profile.</param>
+            <param name="presentationParameters">The presentation options.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="presentationParameters"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.GraphicsDevice.#ctor(Microsoft.Xna.Framework.Graphics.GraphicsAdapter,Microsoft.Xna.Framework.Graphics.GraphicsProfile,System.Boolean,Microsoft.Xna.Framework.Graphics.PresentationParameters)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Xna.Framework.Graphics.GraphicsDevice" /> class.
+            </summary>
+            <param name="adapter">The graphics adapter.</param>
+            <param name="graphicsProfile">The graphics profile.</param>
+            <param name="preferHalfPixelOffset"> Indicates if DX9 style pixel addressing or current standard pixel addressing should be used. This value is passed to <see cref="P:Microsoft.Xna.Framework.Graphics.GraphicsDevice.UseHalfPixelOffset"/></param>
             <param name="presentationParameters">The presentation options.</param>
             <exception cref="T:System.ArgumentNullException">
             <paramref name="presentationParameters"/> is <see langword="null"/>.
@@ -11917,7 +12238,7 @@
             </summary>
             <param name="vector">Vector containing the components.</param>
         </member>
-        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8.Microsoft#Xna#Framework#Graphics#PackedVector#IPackedVector#ToVector4">
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8.ToVector4">
             <summary>
             Gets the packed vector in Vector4 format.
             </summary>
@@ -11985,7 +12306,7 @@
             </summary>
             <param name="vector">Vector containing the components.</param>
         </member>
-        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565.Microsoft#Xna#Framework#Graphics#PackedVector#IPackedVector#ToVector4">
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565.ToVector4">
             <summary>
             Gets the packed vector in Vector4 format.
             </summary>
@@ -12233,6 +12554,18 @@
             </summary>
             <returns>The expanded vector.</returns>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle.ToVector4">
+            <summary>
+            Gets the packed vector in Vector4 format.
+            </summary>
+            <returns>The packed vector in Vector4 format</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2.ToVector4">
+            <summary>
+            Gets the packed vector in Vector4 format.
+            </summary>
+            <returns>The packed vector in Vector4 format</returns>
+        </member>
         <member name="T:Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4">
             <summary>
             Packed vector type containing four 16-bit floating-point values.
@@ -12320,6 +12653,18 @@
             <param name="b">The object to the right of the equality operator.</param>
             <returns>true if the objects are different; false otherwise.</returns>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2.ToVector4">
+            <summary>
+            Gets the packed vector in Vector4 format.
+            </summary>
+            <returns>The packed vector in Vector4 format</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2.ToVector4">
+            <summary>
+            Gets the packed vector in Vector4 format.
+            </summary>
+            <returns>The packed vector in Vector4 format</returns>
+        </member>
         <member name="T:Microsoft.Xna.Framework.Graphics.PackedVector.Rg32">
             <summary>
             Packed vector type containing two 16-bit unsigned normalized values ranging from 0 to 1.
@@ -12357,7 +12702,7 @@
             </summary>
             <param name="vector">Vector containing the components.</param>
         </member>
-        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.Rg32.Microsoft#Xna#Framework#Graphics#PackedVector#IPackedVector#ToVector4">
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.Rg32.ToVector4">
             <summary>
             Gets the packed vector in Vector4 format.
             </summary>
@@ -12519,6 +12864,12 @@
             Gets a hash code of the packed vector.
             </summary>
             <returns>The hash code for the packed vector.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.PackedVector.Short2.ToVector4">
+            <summary>
+            Gets the packed vector in Vector4 format.
+            </summary>
+            <returns>The packed vector in Vector4 format</returns>
         </member>
         <member name="T:Microsoft.Xna.Framework.Graphics.PackedVector.Short4">
             <summary>
@@ -12854,7 +13205,15 @@
             <summary>
             Constructs a <see cref="T:Microsoft.Xna.Framework.Graphics.SpriteBatch"/>.
             </summary>
+            <param name="graphicsDevice">The <see cref="T:Microsoft.Xna.Framework.Graphics.GraphicsDevice"/>, which will be used for sprite rendering.</param>        
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="graphicsDevice"/> is null.</exception>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.SpriteBatch.#ctor(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Int32)">
+            <summary>
+            Constructs a <see cref="T:Microsoft.Xna.Framework.Graphics.SpriteBatch"/>.
+            </summary>
             <param name="graphicsDevice">The <see cref="T:Microsoft.Xna.Framework.Graphics.GraphicsDevice"/>, which will be used for sprite rendering.</param>
+            <param name="capacity">The initial capacity of the internal array holding batch items (the value will be rounded to the next multiple of 64).</param>
             <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="graphicsDevice"/> is null.</exception>
         </member>
         <member name="M:Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode,Microsoft.Xna.Framework.Graphics.BlendState,Microsoft.Xna.Framework.Graphics.SamplerState,Microsoft.Xna.Framework.Graphics.DepthStencilState,Microsoft.Xna.Framework.Graphics.RasterizerState,Microsoft.Xna.Framework.Graphics.Effect,System.Nullable{Microsoft.Xna.Framework.Matrix})">
@@ -12877,23 +13236,6 @@
             Flushes all batched text and sprites to the screen.
             </summary>
             <remarks>This command should be called after <see cref="M:Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(Microsoft.Xna.Framework.Graphics.SpriteSortMode,Microsoft.Xna.Framework.Graphics.BlendState,Microsoft.Xna.Framework.Graphics.SamplerState,Microsoft.Xna.Framework.Graphics.DepthStencilState,Microsoft.Xna.Framework.Graphics.RasterizerState,Microsoft.Xna.Framework.Graphics.Effect,System.Nullable{Microsoft.Xna.Framework.Matrix})"/> and drawing commands.</remarks>
-        </member>
-        <member name="M:Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Microsoft.Xna.Framework.Graphics.Texture2D,System.Nullable{Microsoft.Xna.Framework.Vector2},System.Nullable{Microsoft.Xna.Framework.Rectangle},System.Nullable{Microsoft.Xna.Framework.Rectangle},System.Nullable{Microsoft.Xna.Framework.Vector2},System.Single,System.Nullable{Microsoft.Xna.Framework.Vector2},System.Nullable{Microsoft.Xna.Framework.Color},Microsoft.Xna.Framework.Graphics.SpriteEffects,System.Single)">
-            <summary>
-            Submit a sprite for drawing in the current batch.
-            </summary>
-            <param name="texture">A texture.</param>
-            <param name="position">The drawing location on screen or null if <paramref name="destinationRectangle"> is used.</paramref></param>
-            <param name="destinationRectangle">The drawing bounds on screen or null if <paramref name="position"> is used.</paramref></param>
-            <param name="sourceRectangle">An optional region on the texture which will be rendered. If null - draws full texture.</param>
-            <param name="origin">An optional center of rotation. Uses <see cref="P:Microsoft.Xna.Framework.Vector2.Zero"/> if null.</param>
-            <param name="rotation">An optional rotation of this sprite. 0 by default.</param>
-            <param name="scale">An optional scale vector. Uses <see cref="P:Microsoft.Xna.Framework.Vector2.One"/> if null.</param>
-            <param name="color">An optional color mask. Uses <see cref="P:Microsoft.Xna.Framework.Color.White"/> if null.</param>
-            <param name="effects">The optional drawing modificators. <see cref="F:Microsoft.Xna.Framework.Graphics.SpriteEffects.None"/> by default.</param>
-            <param name="layerDepth">An optional depth of the layer of this sprite. 0 by default.</param>
-            <exception cref="T:System.InvalidOperationException">Throwns if both <paramref name="position"/> and <paramref name="destinationRectangle"/> been used.</exception>
-            <remarks>This overload uses optional parameters. This overload requires only one of <paramref name="position"/> and <paramref name="destinationRectangle"/> been used.</remarks>
         </member>
         <member name="M:Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Vector2,System.Nullable{Microsoft.Xna.Framework.Rectangle},Microsoft.Xna.Framework.Color,System.Single,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Graphics.SpriteEffects,System.Single)">
             <summary>
@@ -13993,14 +14335,28 @@
             <typeparam name="T"></typeparam>
             <param name="data">Destination array for the texture data</param>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.Texture2D.FromFile(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.String)">
+            <summary>
+            Creates a <see cref="T:Microsoft.Xna.Framework.Graphics.Texture2D"/> from a file, supported formats bmp, gif, jpg, png, tif and dds (only for simple textures).
+            May work with other formats, but will not work with tga files.
+            This internally calls <see cref="M:Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.IO.Stream)"/>.
+            </summary>
+            <param name="graphicsDevice">The graphics device to use to create the texture.</param>
+            <param name="path">The path to the image file.</param>
+            <returns>The <see cref="T:Microsoft.Xna.Framework.Graphics.Texture2D"/> created from the given file.</returns>
+            <remarks>Note that different image decoders may generate slight differences between platforms, but perceptually 
+            the images should be identical.  This call does not premultiply the image alpha, but areas of zero alpha will
+            result in black color data.
+            </remarks>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.IO.Stream)">
             <summary>
-            Creates a Texture2D from a stream, supported formats bmp, gif, jpg, png, tif and dds (only for simple textures).
+            Creates a <see cref="T:Microsoft.Xna.Framework.Graphics.Texture2D"/> from a stream, supported formats bmp, gif, jpg, png, tif and dds (only for simple textures).
             May work with other formats, but will not work with tga files.
             </summary>
-            <param name="graphicsDevice">The graphics device where the texture will be created.</param>
+            <param name="graphicsDevice">The graphics device to use to create the texture.</param>
             <param name="stream">The stream from which to read the image data.</param>
-            <returns>The <see cref="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.Color"/> texture created from the image stream.</returns>
+            <returns>The <see cref="T:Microsoft.Xna.Framework.Graphics.Texture2D"/> created from the image stream.</returns>
             <remarks>Note that different image decoders may generate slight differences between platforms, but perceptually 
             the images should be identical.  This call does not premultiply the image alpha, but areas of zero alpha will
             result in black color data.
@@ -15006,7 +15362,10 @@
         </member>
         <member name="M:Microsoft.Xna.Framework.Graphics.Viewport.Project(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Matrix,Microsoft.Xna.Framework.Matrix,Microsoft.Xna.Framework.Matrix)">
             <summary>
-            Projects a <see cref="T:Microsoft.Xna.Framework.Vector3"/> from world space into screen space.
+            Projects a <see cref="T:Microsoft.Xna.Framework.Vector3"/> from model space into screen space.
+            The source point is transformed from model space to world space by the world matrix,
+            then from world space to view space by the view matrix, and
+            finally from view space to screen space by the projection matrix.
             </summary>
             <param name="source">The <see cref="T:Microsoft.Xna.Framework.Vector3"/> to project.</param>
             <param name="projection">The projection <see cref="T:Microsoft.Xna.Framework.Matrix"/>.</param>
@@ -15016,7 +15375,10 @@
         </member>
         <member name="M:Microsoft.Xna.Framework.Graphics.Viewport.Unproject(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Matrix,Microsoft.Xna.Framework.Matrix,Microsoft.Xna.Framework.Matrix)">
             <summary>
-            Unprojects a <see cref="T:Microsoft.Xna.Framework.Vector3"/> from screen space into world space.
+            Unprojects a <see cref="T:Microsoft.Xna.Framework.Vector3"/> from screen space into model space.
+            The source point is transformed from screen space to view space by the inverse of the projection matrix,
+            then from view space to world space by the inverse of the view matrix, and
+            finally from world space to model space by the inverse of the world matrix.
             Note source.Z must be less than or equal to MaxDepth.
             </summary>
             <param name="source">The <see cref="T:Microsoft.Xna.Framework.Vector3"/> to unproject.</param>
@@ -15125,6 +15487,22 @@
             The default value is <c>true</c>.
             </summary>
         </member>
+        <member name="P:Microsoft.Xna.Framework.GraphicsDeviceManager.PreferHalfPixelOffset">
+            <summary>
+            Indicates if DX9 style pixel addressing or current standard
+            pixel addressing should be used. This flag is set to
+            <c>false</c> by default. It should be set to <c>true</c>
+            for XNA compatibility. It is recommended to leave this flag
+            set to <c>false</c> for projects that are not ported from
+            XNA. This value is passed to <see cref="P:Microsoft.Xna.Framework.Graphics.GraphicsDevice.UseHalfPixelOffset"/>.
+            </summary>
+            <remarks>
+            XNA uses DirectX9 for its graphics. DirectX9 interprets UV
+            coordinates differently from other graphics API's. This is
+            typically referred to as the half-pixel offset. MonoGame
+            replicates XNA behavior if this flag is set to <c>true</c>.
+            </remarks>
+        </member>
         <member name="P:Microsoft.Xna.Framework.GraphicsDeviceManager.PreferMultiSampling">
             <summary>
             Indicates the desire for a multisampled back buffer.
@@ -15190,6 +15568,17 @@
             When called at startup this will automatically apply the supported orientations during initialization.  If
             set after startup you must call ApplyChanges() for the supported orientations to be changed.
             </remarks>
+        </member>
+        <member name="F:Microsoft.Xna.Framework.InputKeyEventArgs.Key">
+            <summary>
+            The key that was either pressed or released.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.InputKeyEventArgs.#ctor(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Create a new keyboard input event
+            </summary>
+            <param name="key">The key involved in this event</param>
         </member>
         <member name="P:Microsoft.Xna.Framework.Media.Album.Duration">
             <summary>
@@ -15582,6 +15971,16 @@
         <member name="M:MonoGame.Utilities.ReflectionHelpers.ManagedSizeOf(System.Type)">
             <summary>
             Fallback handler for Marshal.SizeOf(type)
+            </summary>
+        </member>
+        <member name="M:MonoGame.Utilities.TimerHelper.GetCurrentResolution">
+            <summary>
+            Returns the current timer resolution in milliseconds
+            </summary>
+        </member>
+        <member name="M:MonoGame.Utilities.TimerHelper.SleepForNoMoreThan(System.Double)">
+            <summary>
+            Sleeps as long as possible without exceeding the specified period
             </summary>
         </member>
         <member name="T:MonoGame.Utilities.ZlibStream">
@@ -18036,13 +18435,135 @@
             </summary>
             <param name="buffer"></param>
         </member>
-        <member name="M:MonoGame.Utilities.Imaging.frexp(System.Double,System.Int32*)">
+        <member name="T:MonoGame.Framework.Utilities.PlatformInfo">
+            <summary>
+            Utility class that returns information about the underlying platform
+            </summary>
+        </member>
+        <member name="P:MonoGame.Framework.Utilities.PlatformInfo.MonoGamePlatform">
+            <summary>
+            Underlying game platform type
+            </summary>
+        </member>
+        <member name="P:MonoGame.Framework.Utilities.PlatformInfo.GraphicsBackend">
+            <summary>
+            Graphics backend
+            </summary>
+        </member>
+        <member name="T:MonoGame.Framework.Utilities.MonoGamePlatform">
+            <summary>
+            Type of the underlying game platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.Android">
+            <summary>
+            MonoGame Android platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.iOS">
+            <summary>
+            MonoGame iOS platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.tvOS">
+            <summary>
+            MonoGame tvOS platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.DesktopGL">
+            <summary>
+            MonoGame cross platform desktop OpenGL platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.Windows">
+            <summary>
+            MonoGame Win32 Windows platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.WindowsUniversal">
+            <summary>
+            MonoGame Windows universal platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.WebGL">
+            <summary>
+            MonoGame WebGL platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.PSVita">
+            <summary>
+            MonoGame PSVita platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.XboxOne">
+            <summary>
+            MonoGame Xbox One platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.PlayStation4">
+            <summary>
+            MonoGame PlayStation 4 platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.NintendoSwitch">
+            <summary>
+            MonoGame Nintendo Switch platform.
+            </summary>
+        </member>
+        <member name="T:MonoGame.Framework.Utilities.GraphicsBackend">
+            <summary>
+            Type of the underlying graphics backend.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.GraphicsBackend.DirectX">
+            <summary>
+            Represents the Microsoft DirectX graphics backend.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.GraphicsBackend.OpenGL">
+            <summary>
+            Represents the OpenGL graphics backend.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.GraphicsBackend.Vulkan">
+            <summary>
+            Represents the Vulkan graphics backend.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.GraphicsBackend.Metal">
+            <summary>
+            Represents the Apple Metal graphics backend.
+            </summary>
+        </member>
+        <member name="M:StbImageWriteSharp.CRuntime.frexp(System.Double,System.Int32*)">
             <summary>
             This code had been borrowed from here: https://github.com/MachineCognitis/C.math.NET
             </summary>
             <param name="number"></param>
             <param name="exponent"></param>
             <returns></returns>
+        </member>
+        <member name="M:StbImageWriteSharp.ImageWriter.WriteJpg(System.Void*,System.Int32,System.Int32,StbImageWriteSharp.ColorComponents,System.IO.Stream,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="components"></param>
+            <param name="dest"></param>
+            <param name="quality">Should be from 1 to 100</param>
+        </member>
+        <member name="M:StbImageWriteSharp.ImageWriter.WriteJpg(System.Byte[],System.Int32,System.Int32,StbImageWriteSharp.ColorComponents,System.IO.Stream,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="data"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="components"></param>
+            <param name="dest"></param>
+            <param name="quality">Should be from 1 to 100</param>
         </member>
     </members>
 </doc>

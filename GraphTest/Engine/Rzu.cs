@@ -49,25 +49,12 @@ namespace GraphTest
             _model.Root.Transform = Matrix.CreateScale(0.1f) * Matrix.CreateTranslation(_position + new Vector3(0.1f, 0.2f, 0.3f));
 
             var effect = Program.GraphTest.Shader;
-            var gd = Program.GraphTest.GraphicsDevice;
             var mat = effect.Matrix;
-            var bl = gd.BlendState;
 
             effect.TextureEnabled = true;
             effect.Texture = _texture;
             effect.Matrix = _posMat * mat;
             effect.ModelTransform = _posMat;
-
-            if (!effect.LockTechnique)
-            {
-                gd.BlendState = BlendState.Additive;
-                gd.DepthStencilState = DepthStencilState.DepthRead;
-                effect.Technique = ShaderTechnique.Standart;
-                Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
-
-                gd.BlendState = bl;
-                gd.DepthStencilState = DepthStencilState.Default;
-            }
 
             effect.Technique = ShaderTechnique.Standart;
             Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
@@ -88,17 +75,6 @@ namespace GraphTest
                 var matrix = _model.Root.Transform * mesh.ParentBone.Transform;
                 effect.Matrix = matrix * Program.GraphTest.Matrix;
                 effect.ModelTransform = matrix;
-
-                if (!effect.LockTechnique)
-                {
-                    gd.BlendState = BlendState.Additive;
-                    gd.DepthStencilState = DepthStencilState.DepthRead;
-                    effect.Technique = ShaderTechnique.Standart;
-                    mesh.Draw();
-
-                    gd.BlendState = bl;
-                    gd.DepthStencilState = DepthStencilState.Default;
-                }
                 effect.Technique = ShaderTechnique.Standart;
                 mesh.Draw();
 

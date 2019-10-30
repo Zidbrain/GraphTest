@@ -57,53 +57,6 @@ Target PS(in VSOut input)
 
 TECHNIQUE(MeshStandart, MeshVS, PS);
 TECHNIQUE(MeshWriteDepth, MeshVS, WallPS0);
-TECHNIQUE(MeshSoftShadows, MeshVS, SoftShadows);
 
 TECHNIQUE(PrimitiveStandart, PrimitiveVS, PS);
 TECHNIQUE(PrimitiveWriteDepth, PrimitiveVS, WallPS0);
-TECHNIQUE(PrimitiveSoftShadows, PrimitiveVS, SoftShadows);
-TECHNIQUE(PrimitiveHot, PrimitiveVS, HotPS);
-TECHNIQUE(PrimitiveBlur, PrimitiveVS, Blur);
-
-TECHNIQUE(PrimitiveApplyLighting, PrimitiveVS, CalculateColorLighting);
-TECHNIQUE(PrimitiveGamma, PrimitiveVS, ApplyGamma);
-TECHNIQUE(PrimitiveApplyAmbient, PrimitiveVS, ApplyAmbient);
-
-
-technique PrimitiveToon
-{
-    pass P0
-    {
-        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS0();
-        PixelShader = compile PS_SHADERMODEL ToonPS0();
-    }
-    pass P1
-    {
-        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS1();
-        PixelShader = compile PS_SHADERMODEL ToonPS1();
-    }
-    pass P2
-    {
-        VertexShader = compile VS_SHADERMODEL PrimitiveToonVS2();
-        PixelShader = compile PS_SHADERMODEL ToonPS2();
-    }
-};
-
-technique MeshToon
-{
-    pass P0
-    {
-        VertexShader = compile VS_SHADERMODEL MeshToonVS0();
-        PixelShader = compile PS_SHADERMODEL ToonPS0();
-    }
-    pass P1
-    {
-        VertexShader = compile VS_SHADERMODEL MeshToonVS1();
-        PixelShader = compile PS_SHADERMODEL ToonPS1();
-    }
-    pass P2
-    {
-        VertexShader = compile VS_SHADERMODEL MeshToonVS2();
-        PixelShader = compile PS_SHADERMODEL ToonPS2();
-    }
-};

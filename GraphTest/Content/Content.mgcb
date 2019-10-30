@@ -59,7 +59,8 @@
 #begin Shaders/shader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
-/processorParam:DebugMode=Auto
+/processorParam:DebugMode=Debug
+/processorParam:Defines=
 /build:Shaders/shader.fx
 
 #begin Skybox/back.bmp

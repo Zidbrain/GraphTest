@@ -42,7 +42,7 @@ namespace GraphTest
         {
             _graphics = new GraphicsDeviceManager(this)
             { 
-                PreferMultiSampling = true, 
+                PreferMultiSampling = false, 
                 GraphicsProfile = GraphicsProfile.HiDef, 
                 HardwareModeSwitch = false, 
                 SynchronizeWithVerticalRetrace = false,
@@ -136,17 +136,17 @@ namespace GraphTest
 
             SamplerState = new SamplerState()
             {
-                Filter = TextureFilter.Anisotropic,
+                Filter = TextureFilter.Point,
                 AddressU = TextureAddressMode.Wrap,
                 AddressV = TextureAddressMode.Wrap,
                 AddressW = TextureAddressMode.Wrap,
-                MaxAnisotropy = 16,
+                MaxAnisotropy = 0,
             };
 
             RasterizerState = new RasterizerState()
             {
                 CullMode = CullMode.None,
-                MultiSampleAntiAlias = true,
+                MultiSampleAntiAlias = false,
             };
 
             BlendState = new BlendState()
@@ -161,7 +161,7 @@ namespace GraphTest
 
             RenderTargets = new SourceRenderTargets();
 
-            United = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.None, 4, RenderTargetUsage.PreserveContents);
+            United = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
             StaticVertexes = new DynamicVertexBuffer(GraphicsDevice, typeof(VertexPositionColorNormalTexture), 6, BufferUsage.WriteOnly);
             var vert = new VertexPositionColorNormalTexture[]
@@ -181,7 +181,7 @@ namespace GraphTest
             _rzu1 = new Rzu(new Vector3(-0.5f, 0.5f, -1.5f), 0.5f);
             Mouse.SetPosition(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
 
-            _table = new ModelManipulate("untitled") { Position = new Vector3(-2f, 0.25f, -4f), Size = new Vector3(0.3f) };
+            _table = new ModelManipulate("untitled") { Position = new Vector3(-2f, 0.25f, -4f), Size = new Vector3(0.3f), SpecularEnabled = true };
 
             DrawingQueue = new DrawingQueue();
 
@@ -193,7 +193,7 @@ namespace GraphTest
             _keys = new List<Keys>();
             _skybox = new SkyBox();
 
-            LightEngine = new LightEngine() { Enabled = true };
+            LightEngine = new LightEngine() { Enabled = false };
             LightEngine.Lights.Add(new Light() { Position = new Vector3(5f, 0f, 5f), Radius = 20f, ShadowsEnabled = false });
             LightEngine.Lights.Add(new Light { Radius = 10 });
 
@@ -303,7 +303,7 @@ namespace GraphTest
         public void ClearTargets()
         {
             GraphicsDevice.SetRenderTarget(RenderTargets.Color);
-            GraphicsDevice.Clear(Color.TransparentBlack);
+            GraphicsDevice.Clear(Color.Transparent);
             GraphicsDevice.SetRenderTarget(RenderTargets.DepthMask);
             GraphicsDevice.Clear(Color.Black);
             GraphicsDevice.SetRenderTarget(RenderTargets.Normal);

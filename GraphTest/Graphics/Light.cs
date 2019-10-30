@@ -16,7 +16,7 @@ namespace GraphTest
         {
             _softShadows = new RenderTargetBinding[]
             {
-                new RenderTargetBinding(new RenderTarget2D(Program.GraphTest.GraphicsDevice,1920,1080, false, SurfaceFormat.Single, DepthFormat.Depth24Stencil8, 4, RenderTargetUsage.PreserveContents) { Name = "SoftShadows" })
+                new RenderTargetBinding(new RenderTarget2D(Program.GraphTest.GraphicsDevice,1920,1080, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.PreserveContents) { Name = "SoftShadows" })
             };
 
             Lights = new List<Light>();
@@ -74,6 +74,7 @@ namespace GraphTest
             else
             {
                 gd.SetRenderTarget(gt.United);
+                gd.Clear(Color.Black);
                 gt.Shader.Matrix = Matrix.Identity;
                 gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
             }
@@ -144,7 +145,7 @@ namespace GraphTest
 
         public Light() => _shadowMap = new RenderTargetBinding[]
                 {
-                new RenderTargetBinding(new RenderTarget2D(Program.GraphTest.GraphicsDevice,1024,1024, false, SurfaceFormat.Single, DepthFormat.Depth24Stencil8, 4, RenderTargetUsage.DiscardContents) {Name = "ShadowMap" }),
+                new RenderTargetBinding(new RenderTarget2D(Program.GraphTest.GraphicsDevice,1024,1024, false, SurfaceFormat.Single, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents) {Name = "ShadowMap" }),
                 };
 
         public void AppendShadow(RenderTargetBinding[] shadowsTarget)
