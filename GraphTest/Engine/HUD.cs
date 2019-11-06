@@ -80,19 +80,19 @@ namespace GraphTest
 
             if (IsConsoleEnabled)
             {
-                gt.SpriteBatch.DrawString(_font, _helpString, new Vector2(1920, 0) - new Vector2(_font.MeasureString(_helpString).X, 0f), Color.White);
+                gt.SpriteBatch.DrawString(_font, _helpString, new Vector2(gt.ScreenSize.X, 0) - new Vector2(_font.MeasureString(_helpString).X, 0f), Color.White);
 
                 var consoleText = _writtenText + (gt.GameTime.TotalGameTime.TotalMilliseconds % 1000 > 500 ? "_" : "");
                 gt.SpriteBatch.DrawString(_font, consoleText, Vector2.Zero, Color.White);
             }
 
             var text = $"X: {gt.CameraPosition.X} Y: {gt.CameraPosition.Y} Z:{gt.CameraPosition.Z}";
-            gt.SpriteBatch.DrawString(_font, text, new Vector2(1920, 1080) - _font.MeasureString(text), Color.White);
+            gt.SpriteBatch.DrawString(_font, text, gt.ScreenSize - _font.MeasureString(text), Color.White);
             var text1 = $"Diffuse Intensity: {gt.Shader.DiffuseIntensity}\n" +
                 $"Diffuse Radius: {gt.Shader.DiffuseRadius}\n" +
                 $"Ambient Color: {gt.Shader.AmbientColor.X}\n" +
                 $"FPS: {gt.FPS.ToString("F0")}";
-            gt.SpriteBatch.DrawString(_font, text1, new Vector2(0, 1080) - new Vector2(0, _font.MeasureString(text1).Y), Color.White);
+            gt.SpriteBatch.DrawString(_font, text1, new Vector2(0, gt.ScreenSize.Y) - new Vector2(0, _font.MeasureString(text1).Y), Color.White);
 
             gt.SpriteBatch.End();
         }

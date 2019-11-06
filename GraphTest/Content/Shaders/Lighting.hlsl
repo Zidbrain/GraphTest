@@ -1,7 +1,7 @@
 ﻿#ifndef LIGHTING_DEF
 #define LIGHTING_DEF
 
-#include "Data.h"
+#include "Data.hlsl"
 
 float4 CalculateColorLighting(in VSOut input) : SV_Target0
 {

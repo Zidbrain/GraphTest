@@ -59,6 +59,7 @@ namespace GraphTest
             Effect = gt.Load<Effect>("Shaders/shader");
 
             Effect.Parameters["_hotTexture"].SetValue(gt.Load<Texture2D>("heatMap"));
+            Effect.Parameters["_screenSize"].SetValue(gt.ScreenSize);
         }
 
         public void ApplyDraw(ShaderInputType inputType, int bufferLength)

@@ -56,12 +56,11 @@
 /processorParam:TextureFormat=Color
 /build:rzu.jpg
 
-#begin Shaders/shader.fx
+#begin Shaders/shader.hlsl
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Debug
-/processorParam:Defines=
-/build:Shaders/shader.fx
+/build:Shaders/shader.hlsl
 
 #begin Skybox/back.bmp
 /importer:TextureImporter

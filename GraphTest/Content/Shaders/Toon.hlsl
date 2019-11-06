@@ -1,7 +1,7 @@
 ﻿#ifndef TOON_DEF
 #define TOON_DEF
 
-#include "Data.h"
+#include "Data.hlsl"
 
 VSOut MeshToonVS0(in Mesh input)
 {

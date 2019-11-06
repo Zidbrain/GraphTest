@@ -70,7 +70,8 @@ namespace GraphTest
             effect.DistortionFactor = 0.1f;
             effect.RiseFactor = 0.8f;
             effect.ModelTransform = _mat;
-            effect.RenderTarget = Program.GraphTest.RenderTargets.Color;
+            effect.RenderTarget = gt.RenderTargets.Color;
+            gd.SetRenderTargets(gt.RenderTargets);
             gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
             effect.Technique = ShaderTechnique.Standart;
         }

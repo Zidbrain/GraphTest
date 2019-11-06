@@ -1,7 +1,7 @@
 ﻿#ifndef HOT_DEF
 #define HOT_DEF
 
-#include "Data.h"
+#include "Data.hlsl"
 
 float2 Hot(float2 input, float distortionFactor)
 {
@@ -20,7 +20,7 @@ Target HotPS(in VSOut input)
     float2 newCoord = Hot(input.TextureCoordinate.xy, _distortionFactor);
     float2 newCoord2 = (newCoord - input.TextureCoordinate.xy) * (input.Position.z / input.Position.w) + input.Position.xy / _screenSize;
 
-    outp.Color = tex2D(renderTargetSampler, newCoord2);
+    outp.Color = Combine(tex2D(textureSampler, newCoord) * input.Color, tex2D(renderTargetSampler, newCoord2));
     outp.Position = CreateFloat4(input.WorldPosition, 1.0);
     outp.Normal = CreateFloat4(input.Normal, 1);
     outp.Depth = float4(input.Position.z / input.Position.w, 0, 0, 1.0);

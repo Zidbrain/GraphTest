@@ -34,6 +34,8 @@ namespace GraphTest
         public Vector3 CameraDirection { get; private set; } = new Vector3(0f, 0f, 1f);
         public float FPS { get; private set; }
 
+        public Vector2 ScreenSize { get; private set; }
+
         public BlendState BlendState { get; private set; }
 
         public DynamicVertexBuffer StaticVertexes { get; private set; }
@@ -130,6 +132,8 @@ namespace GraphTest
         {
             Content.RootDirectory = "Content";
 
+            ScreenSize = new Vector2(GraphicsDevice.Adapter.CurrentDisplayMode.Width, GraphicsDevice.Adapter.CurrentDisplayMode.Height);
+
             Shader = new Shader();
 
             SpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -161,7 +165,7 @@ namespace GraphTest
 
             RenderTargets = new SourceRenderTargets();
 
-            United = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            United = CreateRenderTarget(false, SurfaceFormat.Color, DepthFormat.None, 2, RenderTargetUsage.PreserveContents);
 
             StaticVertexes = new DynamicVertexBuffer(GraphicsDevice, typeof(VertexPositionColorNormalTexture), 6, BufferUsage.WriteOnly);
             var vert = new VertexPositionColorNormalTexture[]
@@ -193,7 +197,7 @@ namespace GraphTest
             _keys = new List<Keys>();
             _skybox = new SkyBox();
 
-            LightEngine = new LightEngine() { Enabled = false };
+            LightEngine = new LightEngine() { Enabled = true };
             LightEngine.Lights.Add(new Light() { Position = new Vector3(5f, 0f, 5f), Radius = 20f, ShadowsEnabled = false });
             LightEngine.Lights.Add(new Light { Radius = 10 });
 
@@ -267,7 +271,7 @@ namespace GraphTest
             if (!_hud.IsConsoleEnabled) UpdateCameraPosition();
 
             Matrix = Matrix.CreateLookAt(CameraPosition, CameraPosition + CameraDirection, Vector3.UnitY) *
-                    Matrix.CreatePerspectiveFieldOfView(ToRadians(45f), 1920f / 1080f, 0.01f, 100f);
+                    Matrix.CreatePerspectiveFieldOfView(ToRadians(45f), ScreenSize.X / ScreenSize.Y, 0.01f, 100f);
             Shader.Matrix = Matrix;
             Shader.ViewVector = CameraDirection;
             Shader.Time = (float)gameTime.TotalGameTime.TotalMilliseconds * 0.001f;
@@ -345,5 +349,8 @@ namespace GraphTest
 
             base.Draw(gameTime);
         }
+
+        public RenderTarget2D CreateRenderTarget(bool mipMap, SurfaceFormat surfaceFormat, DepthFormat depthFormat, int multisample, RenderTargetUsage preservationParameter) =>
+            new RenderTarget2D(GraphicsDevice, GraphicsDevice.Adapter.CurrentDisplayMode.Width, GraphicsDevice.Adapter.CurrentDisplayMode.Height, mipMap, surfaceFormat, depthFormat, multisample, preservationParameter);
     }
 }

@@ -1,8 +1,8 @@
-﻿#include "Data.h"
-#include "Toon.h"
-#include "Hot.h"
-#include "Blur.h"
-#include "Lighting.h"
+﻿#include "Data.hlsl"
+#include "Toon.hlsl"
+#include "Hot.hlsl"
+#include "Blur.hlsl"
+#include "Lighting.hlsl"
 
 VSOut MeshVS(in Mesh input)
 {

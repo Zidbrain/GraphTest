@@ -16,7 +16,7 @@ namespace GraphTest
         {
             _softShadows = new RenderTargetBinding[]
             {
-                new RenderTargetBinding(new RenderTarget2D(Program.GraphTest.GraphicsDevice,1920,1080, false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.PreserveContents) { Name = "SoftShadows" })
+                new RenderTargetBinding(Program.GraphTest.CreateRenderTarget(false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.PreserveContents))
             };
 
             Lights = new List<Light>();

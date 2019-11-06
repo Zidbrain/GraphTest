@@ -44,7 +44,7 @@ uniform extern texture _positionBuffer;
 uniform extern int _amountOfLights;
 uniform extern bool _specular;
 
-static const float2 _screenSize = float2(1920, 1080);
+uniform extern float2 _screenSize;
 
 float3 CreateFloat3(float value)
 {
@@ -84,10 +84,11 @@ sampler2D hotSampler = sampler_state
 
 sampler2D renderTargetSampler = sampler_state
 {
-    AddressU = CLAMP;
-    AddressV = CLAMP;
-    AddressW = CLAMP;
+    AddressU = WRAP;
+    AddressV = WRAP;
+    AddressW = WRAP;
     Texture = <_renderTarget>;
+    BorderColor = 0x000000;
 };
 
 sampler2D depthBuffer = sampler_state
