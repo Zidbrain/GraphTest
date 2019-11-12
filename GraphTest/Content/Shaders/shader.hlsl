@@ -3,6 +3,7 @@
 #include "Hot.hlsl"
 #include "Blur.hlsl"
 #include "Lighting.hlsl"
+#include "ChromaticAbberation.hlsl"
 
 VSOut MeshVS(in Mesh input)
 {
@@ -46,7 +47,7 @@ Target PS(in VSOut input)
 
     outp.Position = CreateFloat4(input.WorldPosition, 1.0);
     outp.Normal = CreateFloat4(input.Normal, 1);
-    outp.Depth = float4(input.Position.z / input.Position.w, 0, 0, 1.0);
+    outp.Depth = float2(input.Position.z / input.Position.w, 0);
 
     if (_specular)
         outp.Depth.g = 1.0;

@@ -13,7 +13,8 @@ namespace GraphTest
         ApplyLighting,
         Gamma,
         ApplyAmbient,
-        Toon
+        Toon,
+        ChromaticAbberation
     }
 
     public enum ShaderInputType
@@ -149,6 +150,12 @@ namespace GraphTest
         {
             get => Effect.Parameters["_diffuseIntensity"].GetValueSingle();
             set => Effect.Parameters["_diffuseIntensity"].SetValue(value);
+        }
+
+        public Vector2 ChromaticAbbreationAmount
+        {
+            get => Effect.Parameters["_chromaticAbbreationAmount"].GetValueVector2();
+            set => Effect.Parameters["_chromaticAbberationAmount"].SetValue(value);
         }
 
         public float DiffuseRadius

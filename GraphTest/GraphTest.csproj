@@ -39,6 +39,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Content\Shaders\ChromaticAbberation.hlsl" />
     <Content Include="Content\Shaders\shader.hlsl" />
     <None Include="App.config" />
     <None Include="Content\thonk.obj" />

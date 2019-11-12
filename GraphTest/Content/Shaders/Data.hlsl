@@ -9,8 +9,26 @@
 #define PS_SHADERMODEL ps_5_0
 #endif
 
-#define TECHNIQUE(techniqueName, vertexShaderName, pixelShaderName) technique techniqueName {pass P0 { VertexShader = compile VS_SHADERMODEL vertexShaderName(); PixelShader = compile PS_SHADERMODEL pixelShaderName();}}
-#define TECHNIQUE_PARAMETERS(techiqueName, vertexShaderName, pixelShaderName, additionalParametes) technique techniqueName{pass P0 {additionalParameters VertexShader = compile VS_SHADERMODEL vertexShaderName(); PixelShader = compile PS_SHADERMODEL pixelShaderName();}}
+#define TECHNIQUE(techniqueName, vertexShaderName, pixelShaderName) \
+technique techniqueName \
+{\
+        pass P0 \
+        { \
+            VertexShader = compile VS_SHADERMODEL vertexShaderName();\
+            PixelShader = compile PS_SHADERMODEL pixelShaderName();\
+        }\
+}
+
+#define TECHNIQUE_PARAMETERS(techiqueName, vertexShaderName, pixelShaderName, additionalParametes) \
+technique techniqueName \
+{\
+    pass P0 \
+    { \
+    additionalParameters\
+    VertexShader = compile VS_SHADERMODEL vertexShaderName();\
+    PixelShader = compile PS_SHADERMODEL pixelShaderName();\
+    }\
+}
 
 #define WRITEDEPTH outp.Depth = CreateFloat4(input.Position.z / input.Position.w, 1.0)
 
@@ -163,7 +181,7 @@ struct Target
     float4 Color : SV_Target0;
     float4 Position : SV_Target1;
     float4 Normal : SV_Target2;
-    float4 Depth : SV_Target3;
+    float2 Depth : SV_Target3;
 };
 
 float4 Combine(float4 a, float4 b)

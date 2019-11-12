@@ -5,7 +5,7 @@
 
 VSOut MeshToonVS0(in Mesh input)
 {
-    VSOut output;
+    VSOut output = (VSOut) 0;
 
     output.Position = mul(input.Position, _matrix);
     output.Position.xy += 0.05 * float2(cos(_time * 10), sin(_time * 10));
@@ -17,7 +17,7 @@ VSOut MeshToonVS0(in Mesh input)
 
 VSOut MeshToonVS1(in Mesh input)
 {
-    VSOut output;
+    VSOut output = (VSOut) 0;
 
     output.Position = mul(input.Position, _matrix);
     output.Position.xy += 0.05 * float2(cos(_time * 10 + 1.0 / 3.0 * 6.28), sin(_time * 10 + 1.0 / 3.0 * 6.28));
@@ -29,7 +29,7 @@ VSOut MeshToonVS1(in Mesh input)
 
 VSOut MeshToonVS2(in Mesh input)
 {
-    VSOut output;
+    VSOut output = (VSOut) 0;
 
     output.Position = mul(input.Position, _matrix);
     output.Position.xy += 0.05 * float2(cos(_time * 10 + 2.0 / 3.0 * 6.28), sin(_time * 10 + 2.0 / 3.0 * 6.28));
@@ -41,7 +41,7 @@ VSOut MeshToonVS2(in Mesh input)
 
 VSOut PrimitiveToonVS0(in Primitive input)
 {
-    VSOut output;
+    VSOut output = (VSOut) 0;
 
     output.Position = mul(input.Position, _matrix);
     output.Position.xy += 0.05 * float2(cos(_time * 10), sin(_time * 10));
@@ -54,7 +54,7 @@ VSOut PrimitiveToonVS0(in Primitive input)
 
 VSOut PrimitiveToonVS1(in Primitive input)
 {
-    VSOut output;
+    VSOut output = (VSOut) 0;
 
     output.Position = mul(input.Position, _matrix);
     output.Position.xy += 0.05 * float2(cos(_time * 10 + 1.0 / 3.0 * 6.28), sin(_time * 10 + 1.0 / 3.0 * 6.28));
@@ -66,7 +66,7 @@ VSOut PrimitiveToonVS1(in Primitive input)
 
 VSOut PrimitiveToonVS2(in Primitive input)
 {
-    VSOut output;
+    VSOut output = (VSOut) 0;
 
     output.Position = mul(input.Position, _matrix);
     output.Position.xy += 0.05 * float2(cos(_time * 10 + 2.0 / 3.0 * 6.28), sin(_time * 10 + 2.0 / 3.0 * 6.28));

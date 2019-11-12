@@ -16,7 +16,7 @@ namespace GraphTest
         {
             _softShadows = new RenderTargetBinding[]
             {
-                new RenderTargetBinding(Program.GraphTest.CreateRenderTarget(false, SurfaceFormat.Single, DepthFormat.None, 0, RenderTargetUsage.PreserveContents))
+                new RenderTargetBinding(Program.GraphTest.CreateRenderTarget(false, SurfaceFormat.Single, DepthFormat.None, 2, RenderTargetUsage.PreserveContents))
             };
 
             Lights = new List<Light>();
@@ -99,6 +99,12 @@ namespace GraphTest
                     gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
                     gt.Present();
                 }
+
+                gt.Shader.Technique = ShaderTechnique.ChromaticAbberation;
+                gt.Shader.ChromaticAbbreationAmount = new Vector2(30) * (float)System.Math.Cos(Program.GraphTest.GameTime.TotalGameTime.TotalMilliseconds / 500f);
+                gt.Shader.Texture = gt.United;
+                gt.Shader.TextureEnabled = true;
+                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
             }
 
             // Restore parameters and continiue

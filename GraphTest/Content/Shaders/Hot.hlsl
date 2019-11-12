@@ -23,7 +23,7 @@ Target HotPS(in VSOut input)
     outp.Color = Combine(tex2D(textureSampler, newCoord) * input.Color, tex2D(renderTargetSampler, newCoord2));
     outp.Position = CreateFloat4(input.WorldPosition, 1.0);
     outp.Normal = CreateFloat4(input.Normal, 1);
-    outp.Depth = float4(input.Position.z / input.Position.w, 0, 0, 1.0);
+    outp.Depth = float2(input.Position.z / input.Position.w, 0);
 
     return outp;
 }
