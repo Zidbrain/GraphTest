@@ -43,7 +43,7 @@ namespace GraphTest
                 ef.ModelTransform = matrix;
                 ef.Matrix = matrix * Program.GraphTest.Matrix;
 
-                mesh.Draw();
+                Program.GraphTest.DrawVertexes(mesh);
 
                 foreach (var part in mesh.MeshParts)
                     part.Effect = effect;

@@ -5,6 +5,12 @@ using static Microsoft.Xna.Framework.MathHelper;
 
 namespace GraphTest
 {
+    public enum LightMode
+    {
+        Default,
+        RayTracing
+    }
+
     public class LightEngine
     {
         private readonly RenderTargetBinding[] _softShadows;
@@ -22,7 +28,7 @@ namespace GraphTest
             Lights = new List<Light>();
         }
 
-        public void Draw()
+        private void DefaultLighting()
         {
             var gd = Program.GraphTest.GraphicsDevice;
             var gt = Program.GraphTest;
@@ -51,10 +57,10 @@ namespace GraphTest
                 for (var i = 0; i < 4; i++)
                 {
                     gt.Shader.VerticalBlur = false;
-                    gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                    gt.DrawVertexes(gt.StaticVertexes);
                     gt.Present();
                     gt.Shader.VerticalBlur = true;
-                    gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                    gt.DrawVertexes(gt.StaticVertexes);
                     gt.Present();
                 }
 
@@ -69,14 +75,14 @@ namespace GraphTest
             if (Enabled)
             {
                 gd.SetRenderTargets(gt.RenderTargets);
-                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                gt.DrawVertexes(gt.StaticVertexes);
             }
             else
             {
                 gd.SetRenderTarget(gt.United);
                 gd.Clear(Color.Black);
                 gt.Shader.Matrix = Matrix.Identity;
-                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                gt.DrawVertexes(gt.StaticVertexes);
             }
 
             if (Enabled)
@@ -84,7 +90,7 @@ namespace GraphTest
                 // Apply ambient lighting
                 gd.SetRenderTarget(gt.United);
                 gt.Shader.Technique = ShaderTechnique.ApplyAmbient;
-                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                gt.DrawVertexes(gt.StaticVertexes);
                 gt.Present();
                 gt.Shader.Texture = gt.United;
                 gt.Shader.RenderTarget = gt.RenderTargets.Color;
@@ -96,21 +102,61 @@ namespace GraphTest
                     gt.Shader.LightPosition = light.Position;
                     gt.Shader.DiffuseRadius = light.Radius;
                     gt.Shader.DiffuseIntensity = light.DiffuseIntensity;
-                    gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                    gt.DrawVertexes(gt.StaticVertexes);
                     gt.Present();
                 }
 
                 gt.Shader.Technique = ShaderTechnique.ChromaticAbberation;
-                gt.Shader.ChromaticAbbreationAmount = new Vector2(30) * (float)System.Math.Cos(Program.GraphTest.GameTime.TotalGameTime.TotalMilliseconds / 500f);
+                gt.Shader.ChromaticAbbreationAmount = new Vector2(5);
                 gt.Shader.Texture = gt.United;
                 gt.Shader.TextureEnabled = true;
-                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                gt.DrawVertexes(gt.StaticVertexes);
             }
 
             // Restore parameters and continiue
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             gt.Shader.Matrix = gt.Matrix;
             gt.Shader.Technique = ShaderTechnique.Standart;
+        }
+
+        private void RayTracingLighting()
+        {
+            var gd = Program.GraphTest.GraphicsDevice;
+            var gt = Program.GraphTest;
+
+            gt.Shader.Texture = gt.RenderTargets.Color;
+            gt.Shader.ShadowMap = (Texture2D)_softShadows[0].RenderTarget;
+            gt.Shader.NormalBuffer = gt.RenderTargets.Normal;
+            gt.Shader.DepthBuffer = gt.RenderTargets.DepthMask;
+            gt.Shader.Matrix = Matrix.Identity;
+            gt.Shader.Technique = ShaderTechnique.Gamma;
+
+            gd.SetRenderTarget(gt.United);
+            gd.Clear(Color.Black);
+            gt.DrawVertexes(gt.StaticVertexes);
+
+            gt.DrawRayTracing = true;
+            gt.DrawingQueue.UpdateRenderTarget = true;
+            gt.Shader.LightPosition = Lights[0].Position;
+            gt.Shader.LightMatrix = gt.Matrix;
+            gt.DrawingQueue.Draw(DrawingEffects.CastsShadow);
+            gt.DrawingQueue.UpdateRenderTarget = false;
+            gt.DrawRayTracing = false;
+        }
+        
+        public LightMode LightMode { get; set; }
+
+        public void Draw()
+        {
+            switch (LightMode)
+            {
+                case LightMode.Default:
+                    DefaultLighting();
+                    break;
+                case LightMode.RayTracing:
+                    RayTracingLighting();
+                    break;
+            }
         }
     }
 
@@ -173,7 +219,7 @@ namespace GraphTest
                 gt.GraphicsDevice.SetRenderTargets(_shadowMap);
                 gt.GraphicsDevice.Clear(Color.Black);
                 gt.Matrix = lightmat;
-                gt.Shader.LightMatirix = gt.Matrix;
+                gt.Shader.LightMatrix = gt.Matrix;
                 gt.Shader.Matrix = gt.Matrix;
                 gt.DrawingQueue.Draw(DrawingEffects.CastsShadow);
                 _box.Posiiton = gt.CameraPosition;
@@ -185,7 +231,7 @@ namespace GraphTest
                 gt.Shader.ShadowMap = (Texture2D)_shadowMap[0].RenderTarget;
                 gt.Shader.Matrix = Matrix.Identity;
                 gt.Shader.Technique = ShaderTechnique.SoftShadows;
-                gt.DrawVertexes(gt.StaticVertexes, ShaderInputType.Primitive);
+                gt.DrawVertexes(gt.StaticVertexes);
 
                 gt.Matrix = mat;
                 gt.Shader.Matrix = mat;

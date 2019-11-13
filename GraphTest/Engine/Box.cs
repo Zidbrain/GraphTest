@@ -5,7 +5,6 @@ namespace GraphTest
 {
     public class SkyBox : IDrawable
     {
-        private readonly DynamicVertexBuffer _buffer;
         private readonly VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D[] _textures;
 
@@ -14,8 +13,6 @@ namespace GraphTest
         public SkyBox()
         {
             _vertexes = GraphTest.ConstructCube(1f, Color.White);
-
-            _buffer = new DynamicVertexBuffer(Program.GraphTest.GraphicsDevice, typeof(VertexPositionColorNormalTexture), 6, BufferUsage.WriteOnly);
 
             _textures = new Texture2D[]
             {
@@ -42,11 +39,13 @@ namespace GraphTest
             ef.CheckDepth = false;
             ef.Matrix = Matrix.CreateTranslation(Program.GraphTest.CameraPosition) * mat;
 
+            var temp = new VertexPositionColorNormalTexture[6];
             for (var i = 0; i < 6; i++)
             {
                 ef.Texture = _textures[i];
-                _buffer.SetData(_vertexes, i * 6, 6);
-                Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
+                for (int j = 0; j < 6; j++)
+                    temp[j] = _vertexes[i * 6 + j];
+                Program.GraphTest.DrawVertexes(temp);
             }
 
             ef.WriteOnlyColor = false;
@@ -57,7 +56,6 @@ namespace GraphTest
     }
     public class Box : IDrawable
     {
-        private readonly DynamicVertexBuffer _buffer;
         private readonly VertexPositionColorNormalTexture[] _vertexes;
         private Vector3 _position;
         private readonly Vector3[] _offsets;
@@ -79,18 +77,15 @@ namespace GraphTest
                 {
                     _vertexes[i] = new VertexPositionColorNormalTexture(_position + _offsets[i], _vertexes[i].Color, _vertexes[i].Normal, _vertexes[i].TextureCoordinate);
                 }
-                _buffer.SetData(_vertexes);
             }
         }
 
         public Box(float size)
         {
-            _buffer = new DynamicVertexBuffer(Program.GraphTest.GraphicsDevice, typeof(VertexPositionColorNormalTexture), 36, BufferUsage.WriteOnly);
             _vertexes = GraphTest.ConstructCube(size, Color.White);
             _offsets = new Vector3[_vertexes.Length];
             for (var i = 0; i < _offsets.Length; i++)
                 _offsets[i] = _vertexes[i].Position;
-            _buffer.SetData(_vertexes);
         }
 
         public void Draw()
@@ -100,7 +95,7 @@ namespace GraphTest
             ef.TextureEnabled = IsTextureEnabled;
             ef.Texture = Texture;
 
-            Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
+            Program.GraphTest.DrawVertexes(_vertexes);
         }
     }
 }

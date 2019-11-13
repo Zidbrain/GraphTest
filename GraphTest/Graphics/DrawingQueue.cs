@@ -32,6 +32,8 @@ namespace GraphTest
             _ordered = false;
         }
 
+        public bool UpdateRenderTarget { get; set; }
+
         public void Draw(DrawingEffects drawingEffects)
         {
             if (!_ordered)
@@ -47,6 +49,9 @@ namespace GraphTest
                     _collection[i] = (_collection[i].drawable, _collection[i].index, true);
                     _collection[i].drawable.Draw();
                     _collection[i] = (_collection[i].drawable, _collection[i].index, false);
+
+                    if (UpdateRenderTarget)
+                        Program.GraphTest.Present();
                 }
             }
         }

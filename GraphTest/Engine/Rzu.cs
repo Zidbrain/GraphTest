@@ -5,7 +5,6 @@ namespace GraphTest
 {
     public class Rzu : IDrawable
     {
-        private readonly DynamicVertexBuffer _buffer;
         private readonly VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D _texture;
         private readonly Model _model;
@@ -39,8 +38,6 @@ namespace GraphTest
             _texture = Program.GraphTest.Load<Texture2D>("lol");
             _model = Program.GraphTest.Load<Model>("thonk");
 
-            _buffer = new DynamicVertexBuffer(Program.GraphTest.GraphicsDevice, typeof(VertexPositionColorNormalTexture), _vertexes.Length, BufferUsage.WriteOnly);
-            _buffer.SetData(_vertexes);
             Position = position;
         }
 
@@ -57,7 +54,7 @@ namespace GraphTest
             effect.ModelTransform = _posMat;
 
             effect.Technique = ShaderTechnique.Standart;
-            Program.GraphTest.DrawVertexes(_buffer, ShaderInputType.Primitive);
+            Program.GraphTest.DrawVertexes(_vertexes);
 
             effect.TextureEnabled = false;
             effect.InputType = ShaderInputType.Mesh;
@@ -76,7 +73,7 @@ namespace GraphTest
                 effect.Matrix = matrix * Program.GraphTest.Matrix;
                 effect.ModelTransform = matrix;
                 effect.Technique = ShaderTechnique.Standart;
-                mesh.Draw();
+                Program.GraphTest.DrawVertexes(mesh);
 
                 foreach (var part in mesh.MeshParts)
                 {

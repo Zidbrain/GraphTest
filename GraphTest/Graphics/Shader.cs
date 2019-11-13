@@ -14,7 +14,8 @@ namespace GraphTest
         Gamma,
         ApplyAmbient,
         Toon,
-        ChromaticAbberation
+        ChromaticAbberation,
+        RayTracing
     }
 
     public enum ShaderInputType
@@ -66,12 +67,27 @@ namespace GraphTest
         public void ApplyDraw(ShaderInputType inputType, int bufferLength)
         {
             InputType = inputType;
-            
+
             foreach (var pass in Effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                Program.GraphTest.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, bufferLength);
+                if (inputType == ShaderInputType.Primitive)
+                    Program.GraphTest.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, bufferLength);
+                else
+                    Program.GraphTest.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, bufferLength);
             }
+        }
+
+        public Vector3 PointOnPlane
+        {
+            get => Effect.Parameters["_pointOnPlane"].GetValueVector3();
+            set => Effect.Parameters["_pointOnPlane"].SetValue(value);
+        }
+
+        public Vector3 Normal
+        {
+            get => Effect.Parameters["_normal"].GetValueVector3();
+            set => Effect.Parameters["_normal"].SetValue(value);
         }
 
         public int AmountOfLights
@@ -96,6 +112,12 @@ namespace GraphTest
         {
             get => Effect.Parameters["_color"].GetValueVector4();
             set => Effect.Parameters["_color"].SetValue(value);
+        }
+
+        public bool NormalMapEnabled
+        {
+            get => Effect.Parameters["_normalMapEnabled"].GetValueBoolean();
+            set => Effect.Parameters["_normalMapEnabled"].SetValue(value);
         }
 
         public Texture2D Texture
@@ -170,7 +192,7 @@ namespace GraphTest
             set => Effect.Parameters["_ambientColor"].SetValue(value);
         }
 
-        public Matrix LightMatirix
+        public Matrix LightMatrix
         {
             get => Effect.Parameters["_lightMatrix"].GetValueMatrix();
             set => Effect.Parameters["_lightMatrix"].SetValue(value);

@@ -4,6 +4,7 @@
 #include "Blur.hlsl"
 #include "Lighting.hlsl"
 #include "ChromaticAbberation.hlsl"
+#include "RayTracing.hlsl"
 
 VSOut MeshVS(in Mesh input)
 {
@@ -17,6 +18,8 @@ VSOut MeshVS(in Mesh input)
 
     return output;
 }
+
+uniform extern bool _normalMapEnabled;
 
 VSOut PrimitiveVS(in Primitive input)
 {
@@ -46,7 +49,15 @@ Target PS(in VSOut input)
         return outp;
 
     outp.Position = CreateFloat4(input.WorldPosition, 1.0);
-    outp.Normal = CreateFloat4(input.Normal, 1);
+
+    float3 normal = float3(0, 0, 0);
+    if (_normalMapEnabled)
+    {
+        normal = tex2D(normalBuffer, input.TextureCoordinate).rgb;
+        normal = float3((normal.r - 0.5) * 2, (normal.g - 0.5) * 2, (normal.b - 0.5) * -2);
+    }
+    outp.Normal = CreateFloat4(input.Normal + normal, 1);
+
     outp.Depth = float2(input.Position.z / input.Position.w, 0);
 
     if (_specular)

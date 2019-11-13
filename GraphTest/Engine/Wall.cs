@@ -6,7 +6,6 @@ namespace GraphTest
 {
     public class Wall : IDrawable
     {
-        private readonly DynamicVertexBuffer _buffer;
         private readonly VertexPositionColorNormalTexture[] _vertexes;
         private readonly Texture2D _texture;
         private readonly Matrix _mat = Matrix.CreateTranslation(Vector3.Zero);
@@ -32,8 +31,6 @@ namespace GraphTest
             {
                 _vertexes[i] = new VertexPositionColorNormalTexture(pos[i].Position, new Color(Color.White, 0.5f), normals[i / 6], pos[i].TextureCoordinate);
             }
-            _buffer = new DynamicVertexBuffer(Program.GraphTest.GraphicsDevice, typeof(VertexPositionColorNormalTexture), _vertexes.Length, BufferUsage.WriteOnly);
-            _buffer.SetData(_vertexes);
 
             _texture = Program.GraphTest.Load<Texture2D>("lol");
         }
@@ -46,7 +43,7 @@ namespace GraphTest
 
             if (gt.Shader.LockTechnique)
             {
-                gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
+                gt.DrawVertexes(_vertexes);
                 return;
             }
 
@@ -54,7 +51,7 @@ namespace GraphTest
             gd.Clear(Color.Black);
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             effect.Technique = ShaderTechnique.WriteDepth;
-            gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
+            gt.DrawVertexes(_vertexes);
 
             gd.SetRenderTarget(gt.RenderTargets.Color);
             gt.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -72,7 +69,7 @@ namespace GraphTest
             effect.ModelTransform = _mat;
             effect.RenderTarget = gt.RenderTargets.Color;
             gd.SetRenderTargets(gt.RenderTargets);
-            gt.DrawVertexes(_buffer, ShaderInputType.Primitive);
+            gt.DrawVertexes(_vertexes);
             effect.Technique = ShaderTechnique.Standart;
         }
     }
