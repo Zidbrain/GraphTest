@@ -2165,6 +2165,12 @@
             Represents the value of pi times two(6.28318548).
             </summary>
         </member>
+        <member name="F:Microsoft.Xna.Framework.MathHelper.Tau">
+            <summary>
+            Represents the value of pi times two(6.28318548).
+            This is an alias of TwoPi.
+            </summary>
+        </member>
         <member name="M:Microsoft.Xna.Framework.MathHelper.Barycentric(System.Single,System.Single,System.Single,System.Single,System.Single)">
             <summary>
             Returns the Cartesian coordinate for one axis of a point that is defined by a given triangle and two normalized barycentric (areal) coordinates.
@@ -3423,6 +3429,17 @@
             <param name="rightMotor">The speed of the right motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
             <returns>Returns true if the vibration motors were set.</returns>
         </member>
+        <member name="M:Microsoft.Xna.Framework.Input.GamePad.SetVibration(Microsoft.Xna.Framework.PlayerIndex,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Sets the vibration motor speeds on the controller device if supported.
+            </summary>
+            <param name="playerIndex">Player index that identifies the controller to set.</param>
+            <param name="leftMotor">The speed of the left motor, between 0.0 and 1.0. This motor is a low-frequency motor.</param>
+            <param name="rightMotor">The speed of the right motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
+            <param name="leftTrigger">(Xbox One controller only) The speed of the left trigger motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
+            <param name="rightTrigger">(Xbox One controller only) The speed of the right trigger motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
+            <returns>Returns true if the vibration motors were set.</returns>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Input.GamePad.SetVibration(System.Int32,System.Single,System.Single)">
             <summary>
             Sets the vibration motor speeds on the controller device if supported.
@@ -3430,6 +3447,17 @@
             <param name="index">Index for the controller you want to query.</param>
             <param name="leftMotor">The speed of the left motor, between 0.0 and 1.0. This motor is a low-frequency motor.</param>
             <param name="rightMotor">The speed of the right motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
+            <returns>Returns true if the vibration motors were set.</returns>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Input.GamePad.SetVibration(System.Int32,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Sets the vibration motor speeds on the controller device if supported.
+            </summary>
+            <param name="index">Index for the controller you want to query.</param>
+            <param name="leftMotor">The speed of the left motor, between 0.0 and 1.0. This motor is a low-frequency motor.</param>
+            <param name="rightMotor">The speed of the right motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
+            <param name="leftTrigger">(Xbox One controller only) The speed of the left trigger motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
+            <param name="rightTrigger">(Xbox One controller only) The speed of the right trigger motor, between 0.0 and 1.0. This motor is a high-frequency motor.</param>
             <returns>Returns true if the vibration motors were set.</returns>
         </member>
         <member name="P:Microsoft.Xna.Framework.Input.GamePad.MaximumGamePadCount">
@@ -4183,6 +4211,14 @@
             </summary>
             <value><c>true</c> if the current platform supports reading raw joystick data; otherwise, <c>false</c>.</value>
         </member>
+        <member name="P:Microsoft.Xna.Framework.Input.Joystick.LastConnectedIndex">
+            <summary>
+            Gets a value indicating the last joystick index connected to the system. If this value is less than 0, no joysticks are connected.
+            <para>The order joysticks are connected and disconnected determines their index.
+            As such, this value may be larger than 0 even if only one joystick is connected.
+            </para>
+            </summary>
+        </member>
         <member name="M:Microsoft.Xna.Framework.Input.Joystick.GetCapabilities(System.Int32)">
             <summary>
             Gets the capabilites of the joystick.
@@ -4220,6 +4256,12 @@
             Gets the unique identifier of the joystick.
             </summary>
             <value>String representing the unique identifier of the joystick.</value>
+        </member>
+        <member name="P:Microsoft.Xna.Framework.Input.JoystickCapabilities.DisplayName">
+            <summary>
+            Gets the joystick's display name.
+            </summary>
+            <value>String representing the display name of the joystick.</value>
         </member>
         <member name="P:Microsoft.Xna.Framework.Input.JoystickCapabilities.IsGamepad">
             <summary>
@@ -4473,16 +4515,6 @@
             Holds the state of keystrokes by a keyboard.
             </summary>
         </member>
-        <member name="P:Microsoft.Xna.Framework.Input.KeyboardState.CapsLock">
-            <summary>
-            Gets the current state of the Caps Lock key.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Xna.Framework.Input.KeyboardState.NumLock">
-            <summary>
-            Gets the current state of the Num Lock key.
-            </summary>
-        </member>
         <member name="M:Microsoft.Xna.Framework.Input.KeyboardState.#ctor(Microsoft.Xna.Framework.Input.Keys[],System.Boolean,System.Boolean)">
             <summary>
             Initializes a new instance of the <see cref="T:Microsoft.Xna.Framework.Input.KeyboardState"/> class.
@@ -4496,6 +4528,16 @@
             Initializes a new instance of the <see cref="T:Microsoft.Xna.Framework.Input.KeyboardState"/> class.
             </summary>
             <param name="keys">List of keys to be flagged as pressed on initialization.</param>
+        </member>
+        <member name="P:Microsoft.Xna.Framework.Input.KeyboardState.CapsLock">
+            <summary>
+            Gets the current state of the Caps Lock key.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Xna.Framework.Input.KeyboardState.NumLock">
+            <summary>
+            Gets the current state of the Num Lock key.
+            </summary>
         </member>
         <member name="P:Microsoft.Xna.Framework.Input.KeyboardState.Item(Microsoft.Xna.Framework.Input.Keys)">
             <summary>
@@ -11571,6 +11613,11 @@
             Gets the support for ETC1
             </summary>
         </member>
+        <member name="P:Microsoft.Xna.Framework.Graphics.GraphicsCapabilities.SupportsEtc2">
+            <summary>
+            Gets the support for ETC2
+            </summary>
+        </member>
         <member name="P:Microsoft.Xna.Framework.Graphics.GraphicsCapabilities.SupportsAtitc">
             <summary>
             Gets the support for ATITC
@@ -11856,6 +11903,18 @@
             <param name="startIndex">The index within the index buffer to start drawing from.</param>
             <param name="primitiveCount">The number of primitives in a single instance.</param>
             <param name="instanceCount">The number of instances to render.</param>
+            <remarks>Draw geometry with data from multiple bound vertex streams at different frequencies.</remarks>
+        </member>
+        <member name="M:Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawInstancedPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Draw instanced geometry from the bound vertex buffers and index buffer.
+            </summary>
+            <param name="primitiveType">The type of primitives in the index buffer.</param>
+            <param name="baseVertex">Used to offset the vertex range indexed from the vertex buffer.</param>
+            <param name="startIndex">The index within the index buffer to start drawing from.</param>
+            <param name="primitiveCount">The number of primitives in a single instance.</param>
+            <param name="instanceCount">The number of instances to render.</param>
+            <param name="baseInstance">Used to offset the instance range indexed from the instance buffer.</param>
             <remarks>Draw geometry with data from multiple bound vertex streams at different frequencies.</remarks>
         </member>
         <member name="M:Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData``1(``0[])">
@@ -14175,6 +14234,36 @@
         <member name="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.RgbaAtcInterpolatedAlpha">
             <summary>
             ATC/ATITC compression (Android)
+            </summary>
+        </member>
+        <member name="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.Rgb8Etc2">
+            <summary>
+            Etc2 RGB8 (Android/iOS withh OpenglES 3.0)
+            </summary>
+        </member>
+        <member name="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.Srgb8Etc2">
+            <summary>
+            Etc2 SRGB8 (Android/iOS withh OpenglES 3.0)
+            </summary>
+        </member>
+        <member name="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.Rgb8A1Etc2">
+            <summary>
+            Etc2 RGB8A1 (Android/iOS withh OpenglES 3.0)
+            </summary>
+        </member>
+        <member name="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.Srgb8A1Etc2">
+            <summary>
+            Etc2 SRGB8A1 (Android/iOS withh OpenglES 3.0)
+            </summary>
+        </member>
+        <member name="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.Rgba8Etc2">
+            <summary>
+            Etc2 RGBA8 EAC (Android/iOS withh OpenglES 3.0)
+            </summary>
+        </member>
+        <member name="F:Microsoft.Xna.Framework.Graphics.SurfaceFormat.SRgb8A8Etc2">
+            <summary>
+            Etc2 SRGB8A8 EAC (Android/iOS withh OpenglES 3.0)
             </summary>
         </member>
         <member name="T:Microsoft.Xna.Framework.Graphics.SwapChainRenderTarget">
@@ -18391,39 +18480,6 @@
             This dictionary is used to resolve byte values for a given character.
             </summary>
         </member>
-        <member name="P:MonoGame.Utilities.Png.PngChunk.Length">
-            <summary>
-            Length of Data field
-            </summary>
-        </member>
-        <member name="P:MonoGame.Utilities.Png.PngChunk.Crc">
-            <summary>
-            CRC of both Type and Data fields, but not Length field
-            </summary>
-        </member>
-        <member name="M:MonoGame.Utilities.Png.PngCrc.BuildCrcTable">
-            <summary>
-            Build CRC lookup table for performance (once-off)
-            </summary>
-        </member>
-        <member name="M:MonoGame.Utilities.Png.PngWriter.GetOptimalFilteredScanline(System.Byte[],System.Byte[],System.Int32)">
-            <summary>
-            Applies all PNG filters to the given scanline and returns the filtered scanline that is deemed
-            to be most compressible, using lowest total variation as proxy for compressibility.
-            </summary>
-            <param name="rawScanline"></param>
-            <param name="previousScanline"></param>
-            <param name="bytesPerPixel"></param>
-            <returns></returns>
-        </member>
-        <member name="M:MonoGame.Utilities.Png.PngWriter.CalculateTotalVariation(System.Byte[])">
-            <summary>
-            Calculates the total variation of given byte array.  Total variation is the sum of the absolute values of
-            neighbour differences.
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
         <member name="M:MonoGame.Utilities.ByteBufferPool.Get(System.Int32)">
             <summary>
             Get a buffer that is at least as big as size.
@@ -18508,6 +18564,11 @@
         <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.NintendoSwitch">
             <summary>
             MonoGame Nintendo Switch platform.
+            </summary>
+        </member>
+        <member name="F:MonoGame.Framework.Utilities.MonoGamePlatform.Stadia">
+            <summary>
+            MonoGame Google Stadia platform.
             </summary>
         </member>
         <member name="T:MonoGame.Framework.Utilities.GraphicsBackend">

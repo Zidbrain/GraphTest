@@ -11,15 +11,11 @@ namespace GraphTest
     {
         private readonly GraphicsDeviceManager _graphics;
         private Rzu _rzu;
-        private Rzu _rzu1;
-        private Wall _wall;
         private Vector2 _yawpitch;
         private KeyboardState _state;
         private Ground _ground;
-        private ModelManipulate _table;
         private HUD _hud;
         private List<Keys> _keys;
-        private SkyBox _skybox;
 
         public Shader Shader { get; private set; }
         public Matrix Matrix { get; set; }
@@ -117,30 +113,25 @@ namespace GraphTest
         public T Load<T>(string path) =>
             Content.Load<T>(path);
 
-        private DynamicVertexBuffer _buffer;
-
         public void DrawVertexes(VertexPositionColorNormalTexture[] buffer)
         {
-            for (int i = 0; i < buffer.Length / 6; i++)
+            if (DrawRayTracing)
             {
-                var temp = new VertexPositionColorNormalTexture[6];
-                for (int j = 0; j < 6; j++)
-                    temp[j] = buffer[i * 6 + j];
-                if (DrawRayTracing)
-                {
-                    Shader.PointOnPlane = temp[0].Position;
-                    Shader.Normal = Vector3.Cross(temp[1].Position - temp[0].Position, temp[2].Position - temp[0].Position);
-                    Shader.Technique = ShaderTechnique.RayTracing;
+                Shader.Matrix = Matrix.Identity;
+                Shader.Technique = ShaderTechnique.RayTracing;
 
-                    _buffer.SetData(StaticVertexes);
-                    Shader.ApplyDraw(ShaderInputType.Primitive, 6);
-                }
-                else
+                for (var i = 0; i < buffer.Length / 3; i++)
                 {
-                    _buffer.SetData(temp);
-                    Shader.ApplyDraw(ShaderInputType.Primitive, 6);
+                    var temp = new Vector3[]
+                    {
+                        buffer[i * 3].Position, buffer[i * 3 + 1].Position, buffer[i * 3 + 2].Position 
+                    };
+                    Shader.ApplyDrawRayTracing(temp);
+                    Present();
                 }
             }
+            else
+                Shader.ApplyDraw(buffer, ShaderInputType.Primitive, 6);
         }
 
         public void DrawVertexes(ModelMesh mesh)
@@ -148,25 +139,23 @@ namespace GraphTest
             if (DrawRayTracing)
                 foreach (var part in mesh.MeshParts)
                 {
-                    var buffer = new VertexPositionColorNormalTexture[part.NumVertices];
-                    part.VertexBuffer.GetData(buffer);
-
-                    Shader.PointOnPlane = buffer[0].Position;
-                    Shader.Normal = Vector3.Cross(buffer[1].Position - buffer[0].Position, buffer[2].Position - buffer[0].Position);
+                    Shader.Matrix = Matrix.Identity;
                     Shader.Technique = ShaderTechnique.RayTracing;
-
-                    _buffer.SetData(StaticVertexes);
-                    Shader.ApplyDraw(ShaderInputType.Primitive, 6);
+                    var buffer = new VertexPositionTexture[part.VertexBuffer.VertexCount];
+                    part.VertexBuffer.GetData(buffer);
+                    var temp = new Vector3[]
+                    {
+                            buffer[0].Position, buffer[1].Position, buffer[2].Position
+                    };
+                    Shader.ApplyDrawRayTracing(temp);
                 }
             else
                 foreach (var part in mesh.MeshParts)
                 {
                     GraphicsDevice.SetVertexBuffer(part.VertexBuffer, part.VertexOffset);
                     GraphicsDevice.Indices = part.IndexBuffer;
-                    Shader.ApplyDraw(ShaderInputType.Mesh, part.NumVertices);
+                    Shader.ApplyDraw(null, ShaderInputType.Mesh, part.PrimitiveCount, 0, part.StartIndex);
                 }
-
-            GraphicsDevice.SetVertexBuffer(_buffer);
         }
 
         public void Present()
@@ -181,6 +170,16 @@ namespace GraphTest
             Content.RootDirectory = "Content";
 
             ScreenSize = new Vector2(GraphicsDevice.Adapter.CurrentDisplayMode.Width, GraphicsDevice.Adapter.CurrentDisplayMode.Height);
+
+            StaticVertexes = new VertexPositionColorNormalTexture[]
+            {
+                new VertexPositionColorNormalTexture(new Vector3(-1,1,1), Color.White, Vector3.Zero, Vector2.Zero),
+                new VertexPositionColorNormalTexture(new Vector3(-1,-1,1), Color.White, Vector3.Zero, new Vector2(0f, 1f)),
+                new VertexPositionColorNormalTexture(new Vector3(1,-1, 1), Color.White, Vector3.Zero, Vector2.One),
+                new VertexPositionColorNormalTexture(new Vector3(1,-1, 1), Color.White, Vector3.Zero, Vector2.One),
+                new VertexPositionColorNormalTexture(new Vector3(-1,1,1), Color.White, Vector3.Zero, Vector2.Zero),
+                new VertexPositionColorNormalTexture(new Vector3(1,1,1), Color.White, Vector3.Zero, new Vector2(1f,0f))
+            };
 
             Shader = new Shader();
 
@@ -215,23 +214,9 @@ namespace GraphTest
 
             United = CreateRenderTarget(false, SurfaceFormat.Color, DepthFormat.None, 2, RenderTargetUsage.PreserveContents);
 
-            StaticVertexes = new VertexPositionColorNormalTexture[]
-            {
-                new VertexPositionColorNormalTexture(new Vector3(-1,1,1), Color.White, Vector3.Zero, Vector2.Zero),
-                new VertexPositionColorNormalTexture(new Vector3(-1,-1,1), Color.White, Vector3.Zero, new Vector2(0f, 1f)),
-                new VertexPositionColorNormalTexture(new Vector3(1,-1, 1), Color.White, Vector3.Zero, Vector2.One),
-                new VertexPositionColorNormalTexture(new Vector3(1,-1, 1), Color.White, Vector3.Zero, Vector2.One),
-                new VertexPositionColorNormalTexture(new Vector3(-1,1,1), Color.White, Vector3.Zero, Vector2.Zero),
-                new VertexPositionColorNormalTexture(new Vector3(1,1,1), Color.White, Vector3.Zero, new Vector2(1f,0f))
-            };
-
             _ground = new Ground();
-            _wall = new Wall();
             _rzu = new Rzu(new Vector3(10f, 0.5f, -1.5f), 0.5f);
-            _rzu1 = new Rzu(new Vector3(-0.5f, 0.5f, -1.5f), 0.5f);
             Mouse.SetPosition(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
-
-            _table = new ModelManipulate("untitled") { Position = new Vector3(-2f, 0.25f, -4f), Size = new Vector3(0.3f), SpecularEnabled = true };
 
             DrawingQueue = new DrawingQueue();
 
@@ -241,14 +226,11 @@ namespace GraphTest
 
             _hud = new HUD();
             _keys = new List<Keys>();
-            _skybox = new SkyBox();
+
 
             LightEngine = new LightEngine() { Enabled = true, LightMode = LightMode.Default };
             LightEngine.Lights.Add(new Light() { Position = new Vector3(5f, 0f, 5f), Radius = 20f, ShadowsEnabled = false });
             LightEngine.Lights.Add(new Light { Radius = 10 });
-
-            _buffer = new DynamicVertexBuffer(GraphicsDevice, typeof(VertexPositionColorNormalTexture), 6, BufferUsage.WriteOnly);
-            GraphicsDevice.SetVertexBuffer(_buffer);
 
             base.LoadContent();
         }
@@ -356,13 +338,16 @@ namespace GraphTest
         public void ClearTargets()
         {
             GraphicsDevice.SetRenderTarget(RenderTargets.Color);
-            GraphicsDevice.Clear(Color.Transparent);
+            GraphicsDevice.Clear(Color.AliceBlue);
             GraphicsDevice.SetRenderTarget(RenderTargets.DepthMask);
             GraphicsDevice.Clear(Color.Black);
             GraphicsDevice.SetRenderTarget(RenderTargets.Normal);
             GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.SetRenderTarget(RenderTargets.Position);
+            GraphicsDevice.Clear(Color.Transparent);
 
             GraphicsDevice.SetRenderTargets(RenderTargets);
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
 
         public void DrawBatch(Texture2D texture)
@@ -376,12 +361,10 @@ namespace GraphTest
         {
             ClearTargets();
 
-            DrawingQueue.Add(_skybox, -1);
+            Shader.Technique = ShaderTechnique.Standart;
+
             DrawingQueue.Add(_ground, 0);
             DrawingQueue.Add(_rzu, 0);
-            DrawingQueue.Add(_rzu1, 0);
-            DrawingQueue.Add(_wall, -1);
-            DrawingQueue.Add(_table, 0);
             DrawingQueue.Draw(DrawingEffects.Standart);
             Present();
 

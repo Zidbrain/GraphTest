@@ -62,9 +62,19 @@ namespace GraphTest
 
             Effect.Parameters["_hotTexture"].SetValue(gt.Load<Texture2D>("heatMap"));
             Effect.Parameters["_screenSize"].SetValue(gt.ScreenSize);
+
+            _buffer = new DynamicVertexBuffer(Program.GraphTest.GraphicsDevice, typeof(VertexPosition), 6, BufferUsage.WriteOnly);
+            _buffer.SetData(new VertexPosition[] {
+                new VertexPosition(new Vector3(-1,1,1)),
+                new VertexPosition(new Vector3(-1,-1,1)),
+                new VertexPosition(new Vector3(1,-1, 1)),
+                new VertexPosition(new Vector3(1,-1, 1)),
+                new VertexPosition(new Vector3(-1,1,1)),
+                new VertexPosition(new Vector3(1,1,1))
+            });
         }
 
-        public void ApplyDraw(ShaderInputType inputType, int bufferLength)
+        public void ApplyDraw(VertexPositionColorNormalTexture[] vertexes, ShaderInputType inputType, int bufferLength, int baseVertex = 0, int startIndex = 0)
         {
             InputType = inputType;
 
@@ -72,16 +82,32 @@ namespace GraphTest
             {
                 pass.Apply();
                 if (inputType == ShaderInputType.Primitive)
-                    Program.GraphTest.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, bufferLength);
+                    Program.GraphTest.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, vertexes, 0, vertexes.Length / 3);
                 else
-                    Program.GraphTest.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, bufferLength);
+                    Program.GraphTest.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, baseVertex, startIndex, bufferLength);
             }
         }
 
-        public Vector3 PointOnPlane
+        private readonly DynamicVertexBuffer _buffer;
+
+        public void ApplyDrawRayTracing(Vector3[] vertexes)
         {
-            get => Effect.Parameters["_pointOnPlane"].GetValueVector3();
-            set => Effect.Parameters["_pointOnPlane"].SetValue(value);
+            InputType = ShaderInputType.Primitive;
+
+            for (int i = 0; i < vertexes.Length; i++)
+            {
+                var done = Vector4.Transform(new Vector4(vertexes[i], 1), ModelTransform);
+                vertexes[i] = new Vector3(done.X, done.Y, done.Z);
+            }
+
+            Normal = Vector3.Cross(vertexes[1] - vertexes[0], vertexes[2] - vertexes[0]);
+            Effect.Parameters["_points"].SetValue(vertexes);
+            Effect.Parameters["_texture"].SetValue(Program.GraphTest.United);
+            Effect.CurrentTechnique.Passes[0].Apply();
+
+            Program.GraphTest.GraphicsDevice.SetVertexBuffer(_buffer);
+            Program.GraphTest.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+            Program.GraphTest.Present();
         }
 
         public Vector3 Normal

@@ -23,7 +23,11 @@ namespace GraphTest
                     _writtenText += e.Character;
             };
 
-            _helpString = "dif <number> - Diffuse Intensity\nrad <number> - Diffuse Lighting Radius\namb <number> - Ambient Color\npos - Set light position on current location";
+            _helpString = "dif <number> - Diffuse Intensity\n" +
+                "rad <number> - Diffuse Lighting Radius\n" +
+                "amb <number> - Ambient Color\n" +
+                "pos - Set light position on current location\n" +
+                "switch - Switch light mode to raytracing and back";
         }
 
         public void Update()
@@ -58,6 +62,8 @@ namespace GraphTest
 
                             Program.GraphTest.LightEngine.Lights[index].Position = Program.GraphTest.CameraPosition;
                         }
+                        else if (_writtenText.StartsWith("switch"))
+                            Program.GraphTest.LightEngine.LightMode = ~Program.GraphTest.LightEngine.LightMode & LightMode.RayTracing;
                     }
                     catch (FormatException) { }
 
@@ -86,12 +92,12 @@ namespace GraphTest
                 gt.SpriteBatch.DrawString(_font, consoleText, Vector2.Zero, Color.White);
             }
 
-            var text = $"X: {gt.CameraPosition.X} Y: {gt.CameraPosition.Y} Z:{gt.CameraPosition.Z}";
+            var text = $"X: {gt.CameraPosition.X} Y: {gt.CameraPosition.Y} Z: {gt.CameraPosition.Z}";
             gt.SpriteBatch.DrawString(_font, text, gt.ScreenSize - _font.MeasureString(text), Color.White);
             var text1 = $"Diffuse Intensity: {gt.Shader.DiffuseIntensity}\n" +
                 $"Diffuse Radius: {gt.Shader.DiffuseRadius}\n" +
                 $"Ambient Color: {gt.Shader.AmbientColor.X}\n" +
-                $"FPS: {gt.FPS.ToString("F0")}";
+                $"FPS: {gt.FPS:F0}";
             gt.SpriteBatch.DrawString(_font, text1, new Vector2(0, gt.ScreenSize.Y) - new Vector2(0, _font.MeasureString(text1).Y), Color.White);
 
             gt.SpriteBatch.End();

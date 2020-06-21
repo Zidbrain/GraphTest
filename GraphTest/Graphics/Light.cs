@@ -124,10 +124,11 @@ namespace GraphTest
             var gd = Program.GraphTest.GraphicsDevice;
             var gt = Program.GraphTest;
 
+            gd.DepthStencilState = DepthStencilState.None;
             gt.Shader.Texture = gt.RenderTargets.Color;
             gt.Shader.ShadowMap = (Texture2D)_softShadows[0].RenderTarget;
             gt.Shader.NormalBuffer = gt.RenderTargets.Normal;
-            gt.Shader.DepthBuffer = gt.RenderTargets.DepthMask;
+            gt.Shader.PositionBuffer = gt.RenderTargets.Position;
             gt.Shader.Matrix = Matrix.Identity;
             gt.Shader.Technique = ShaderTechnique.Gamma;
 
@@ -135,13 +136,19 @@ namespace GraphTest
             gd.Clear(Color.Black);
             gt.DrawVertexes(gt.StaticVertexes);
 
+            gd.SetRenderTarget(null);
+            gd.SetRenderTarget(gt.United);
+
+            gd.DepthStencilState = DepthStencilState.Default;
+
             gt.DrawRayTracing = true;
-            gt.DrawingQueue.UpdateRenderTarget = true;
             gt.Shader.LightPosition = Lights[0].Position;
+            gt.Shader.RenderTarget = gt.RenderTargets.Color;
             gt.Shader.LightMatrix = gt.Matrix;
             gt.DrawingQueue.Draw(DrawingEffects.CastsShadow);
-            gt.DrawingQueue.UpdateRenderTarget = false;
             gt.DrawRayTracing = false;
+            gd.DepthStencilState = DepthStencilState.Default;
+            gt.Shader.Matrix = gt.Matrix;
         }
         
         public LightMode LightMode { get; set; }

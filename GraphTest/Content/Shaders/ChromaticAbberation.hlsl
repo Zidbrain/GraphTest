@@ -1,5 +1,5 @@
 ﻿#ifndef CHROMAB_DEF
-#define CHORMAB_DEF
+#define CHROMAB_DEF
 
 #include "Data.hlsl"
 

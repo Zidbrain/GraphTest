@@ -1,4 +1,7 @@
-﻿#include "Data.hlsl"
+﻿#ifndef SHADER_DEF
+#define SHADER_DEF
+
+#include "Data.hlsl"
 #include "Toon.hlsl"
 #include "Hot.hlsl"
 #include "Blur.hlsl"
@@ -72,3 +75,5 @@ TECHNIQUE(MeshWriteDepth, MeshVS, WallPS0);
 
 TECHNIQUE(PrimitiveStandart, PrimitiveVS, PS);
 TECHNIQUE(PrimitiveWriteDepth, PrimitiveVS, WallPS0);
+
+#endif

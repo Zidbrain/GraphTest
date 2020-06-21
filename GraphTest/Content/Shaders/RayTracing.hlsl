@@ -2,38 +2,68 @@
 #define RAY_TRACING
 
 #include "Data.hlsl"
+#include "Shader.hlsl"
 
-uniform extern float3 _pointOnPlane;
 uniform extern float3 _normal;
+uniform extern float3 _points[3];
 
-float2 FromWorldToScreen(float4 worldCoordinates)
+bool IsInsideTriangle(in float3 value)
 {
-    float4 transform = mul(worldCoordinates, _lightMatrix);
-    return float2(transform.x / transform.w / 2.0 + 0.5, -transform.y / transform.w / 2.0 + 0.5);
+    float3 x = value - _points[0];
+    float3 a = _points[1] - _points[0];
+    float3 b = _points[2] - _points[0];
+    float det = a.x * b.y - b.x * a.y;
+    //float newX = (x.x * b.y - x.y * b.x) / det;
+    //float newY = (a.x * x.y - a.y * x.x) / det;
+    //float3x3 arcT = float3x3(b.y, -b.x, 0,
+    //                        -a.x, a.x, 0,
+    //                         a.y * b.z - a.z * b.y, -a.x * b.z + a.z * b.x, a.x * b.y - b.x * a.y) / det;
+    float3x3 arcT = float3x3(a.x, b.x, 0,
+                             a.y, b.y, 0,
+                             a.z, b.z, 0);
+    float3 newBasis = mul(arcT, x);
+    
+
+    return (newBasis.x >= 0 && newBasis.x <= 1 && newBasis.y >= 0 && newBasis.y <= 1 && newBasis.x + newBasis.y <= 1);
 }
 
-float4 RayTracingPS(in VSOut input) : SV_Target
+float4 RayTracingPS(in float4 input : SV_Position) : SV_Target
 {
-    float3 vecStart = tex2D(positionBuffer, input.TextureCoordinate).xyz;
+    float2 texCoord = input.xy / _screenSize;
+
+    float4 originalColor = tex2D(renderTargetSampler, texCoord);
+    float4 color = tex2D(textureSampler, texCoord);
+    float4 pos = tex2D(positionBuffer, texCoord);
+    if (pos.a == 0)
+        return float4(originalColor.r, originalColor.g, originalColor.b, 1);
+
+    float3 vecStart = pos.rgb;
     float3 vecEnd = _lightPosition;
     float3 vec = vecEnd - vecStart;
-    float4 color = tex2D(renderTargetSampler, input.TextureCoordinate);
+
+    float vecLength = length(vec);
+    if (vecLength >= 12.0)
+        return float4(originalColor.r * 0.75, originalColor.g * 0.75, originalColor.b * 0.75, 1);
 
     float div = dot(vec, _normal);
 
     if (div != 0)
     {
-        float3 intersection = dot((_pointOnPlane - vecStart), _normal) / div * vec + vecStart;
-        float2 intersectionScreen = FromWorldToScreen(CreateFloat4(intersection, 1));
-        float3 position = tex2D(positionBuffer, intersectionScreen).xyz;
+        float d = dot(_points[0] - vecStart, _normal) / div;
+        float3 intersection = d * vec + vecStart;
 
-        if (position.x == intersection.x && position.y == intersection.y && position.z == intersection.z)
-            return float4(color.r * 0.5, color.g * 0.5, color.b * 0.5, 1);
+        if (d > 0 && d < 1 && IsInsideTriangle(intersection))
+            return float4(originalColor.r * 0.25, originalColor.g * 0.25, originalColor.b * 0.25, 1);
+
     }
-    return float4(color.r, color.g, color.b, 1);
+    return color;
 }
 
-TECHNIQUE(PrimitiveRayTracing, PrimitiveVS, RayTracingPS);
-TECHNIQUE(MeshRayTracing, MeshVS, RayTracingPS);
+float4 RayTracingVS(in float4 position : POSITION0) : SV_Position
+{
+    return position;
+}
+
+TECHNIQUE(PrimitiveRayTracing, RayTracingVS, RayTracingPS);
 
 #endif
